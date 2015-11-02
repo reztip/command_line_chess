@@ -20,6 +20,7 @@ module Chess
 end
 
 def print_all
+  include Chess
   puts BLACK_BISHOP_REPRESENTATION
   puts BLACK_ROOK_REPRESENTAITON
   puts BLACK_QUEEN_REPRESENTATION
