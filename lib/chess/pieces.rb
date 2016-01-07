@@ -2,46 +2,59 @@ require_relative "../chess.rb"
 module Chess
 
   class Pieces
+    attr_reader :representation, :color, :position
     @@types = [:pawn, :rook, :knight, :bishop, :queen, :king]
     @@colors = [:black, "black", :white, "white"]
-    def intialize(type, color)
+    def intialize(type, color, position)
       @color = color
       @type = type
+      @position = position
+      @representation = nil
+    end
+
+    def valid_moves
+
     end
   end
 
-  def Rook
-    def initialize(color)
-      super(:rook, color)
+  class Rook < Pieces
+    def initialize(color, position)
+      super(:rook, color, position)
+      @representation = rep_map[@type][@color]
     end
   end
 
-  def Pawn
-  def initialize(color)
-    super(:pawn, color)
+  class Pawn < Pieces
+  def initialize(color, position)
+    super(:pawn, color, position)
+    @representation = rep_map[@type][@color]
     end
   end
 
-  def Knight
-  def initialize(color)
-    super(:knight, color)
+  class Knight < Pieces
+  def initialize(color, position)
+    super(:knight, color, position)
+    @representation = rep_map[@type][@color]
     end
   end
 
-  def Bishop
-    def initialize(color)
-      super(:bishop, color)
+  class Bishop < Pieces
+    def initialize(color, position)
+      super(:bishop, color, position)
+      @representation = rep_map[@type][@color]
       end
   end
-  def Queen
-    def initialize(color)
-      super(:queen, color)
+  class Queen < Pieces
+    def initialize(color, position)
+      super(:queen, color, position)
+      @representation = rep_map[@type][@color]
     end
   end
 
-  def King
-    def initialize(color)
-      super(:king, color)
+  class King < Pieces
+    def initialize(color, position)
+      super(:king, color, position)
+      @representation = rep_map[@type][@color]
     end
   end
 end
