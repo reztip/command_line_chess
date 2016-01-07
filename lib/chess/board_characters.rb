@@ -28,3 +28,5 @@ def print_all
   puts BLACK_KNIGHT_REPRESENTATION
   puts BLACK_PAWN_REPRESENTATION
 end
+
+
