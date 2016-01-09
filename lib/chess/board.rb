@@ -5,7 +5,7 @@ require_relative "./board_characters.rb"
 
 module Chess
   class Board
-    attr_reader :n, :row_labels, :column_labels, :board
+    attr_reader :n, :row_labels, :column_labels
     @@n = 8
     @@row_labels = ((1..@@n).to_a).map {|x| x.to_s}
     @@column_labels = ('A'..'H').to_a
@@ -14,7 +14,7 @@ module Chess
       #make an 8 by 8 square, starting with nil
       @board = []
      (0..8).each do |i|
-      @board << Array.new(8)
+        @board << Array.new(8)
       end #each entry is a row, each row has n entries (of space)
       #by convention, the first row will be the bottom row, belonging to white
       #the last row will be the top row, belonging to black
@@ -28,14 +28,14 @@ module Chess
     end
 
     def to_s
-      b_board = blank_board()
-
-      board_rows = b_board.each_with_index.map do |row, i| # i = 0 to 16 inclusive
-        (i.odd? ? (8  -  i/2).to_s.rjust(2, ' ') : "  ") + row.join
+      s = ''
+      (1..8).reverse_each do |i|
+        s << blank_row()
+        s << actual_row(i)
       end
-      b = board_rows.join("\n")
-      bottom_row = "  " + @@label_map.keys.map {|x| "  " + x.to_s}.join(' ')
-      puts b + "\n" + bottom_row
+      s << blank_row()
+      s << "    " + @@label_map.keys.join('   ')
+      return s
     end
 
     private
@@ -85,39 +85,25 @@ module Chess
 
 
 
-        public
-    def blank_board
-      # in effect i will be in 1, 3, 5, 7, ... 15.  
-      # middle_row = (0..16).map {|x| x.even? ? '| ' : "#{Pawn.new(:white, [1,1]).to_s} "}
-      #map 1 to row 0
-      #map 3 to board row 1
-      #map 13 to board row 6
-      #map 15 to board row 7
-      board = []
-      (0..16).each do |i|
-        board += [
-          i.even? ? blank_row() : other_row(@@n - i - 1) #i will be odd here
-        ]
-      end
-      # board.each do |row|
-        # puts row.join
-      # end
-      return board
-    end
+    public
+
 
     def blank_row #an inner blank_row
-      return ['--']*16 + ['-']
+      return "   " + (['--']*16 + ["\n"]).join
     end
 
-    def other_row(i) #row number
-      r = (0..16).map  do |j|
-        x = piece_at(i/2 +  1, j/2 + 1)
-        j.even? ? '| ' : (x.nil? ? "  " : x.to_s + " ")
+
+
+    def actual_row(i) #i between 1 and 8, return as string
+      s = "|"
+      (1..8).each do |j|
+        x = piece_at(i,j)
+        s << (x.nil? ?  " " : x.to_s) + " | "
       end
-      # p r
-      return r
+      s << "\n"
+      s = i.to_s.rjust(2, " ") + " " + s
+    return s #.slice((s.length/2)..-1)
     end
-
 
   end
 end
@@ -136,3 +122,7 @@ def main
   end
   puts nil
 end
+
+include Chess
+# b = Board.new
+# puts b.to_s
