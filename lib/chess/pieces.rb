@@ -1,12 +1,14 @@
 require_relative "../chess.rb"
 require_relative "./board_characters.rb"
+
+
 module Chess
 
   class Pieces
     attr_reader :representation, :color, :position, :type
     @@types = [:pawn, :rook, :knight, :bishop, :queen, :king]
     @@colors = [:black, "black", :white, "white"]
-    @@REP_MAP = {nil => "", :pawn => {:black => BLACK_PAWN_REPRESENTATION, :white => WHITE_PAWN_REPRESENTATION},
+    @@REP_MAP = {nil => " ", :pawn => {:black => BLACK_PAWN_REPRESENTATION, :white => WHITE_PAWN_REPRESENTATION},
      :king => {:white => WHITE_KING_REPRESENTATION, :black => BLACK_KING_REPRESENTATION},
      :queen => {:black => BLACK_QUEEN_REPRESENTATION, :white => WHITE_QUEEN_REPRESENTATION},
      :rook => {:white => WHITE_ROOK_REPRESENTATION, :black => BLACK_ROOK_REPRESENTATION}, 
@@ -22,6 +24,10 @@ module Chess
 
     def to_s
       return @representation
+    end
+
+    def location
+      return @position.to_s
     end
     
     def valid_moves; end

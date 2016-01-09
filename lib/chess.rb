@@ -56,8 +56,8 @@ module Chess
      end
      @game.make_move(move)
      "It is #{current_player}'s turn."
-
     end
+
     def setup
       puts "Welcome to Chess!"
       print "Who will be first (white)? "
@@ -119,6 +119,7 @@ module Chess
     end
   end
 
+end
 end
 include Chess
 #chess = Chess::Chess.new
