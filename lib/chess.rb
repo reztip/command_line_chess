@@ -3,6 +3,7 @@ require_relative "./chess/version"
 require_relative "./chess/pieces"
 require_relative "./chess/board_characters"
 require_relative "./chess/game_engine"
+require_relative "./chess/board"
 module Chess
   # Your code goes here...
   class Chess
@@ -10,15 +11,10 @@ module Chess
     def initialize
       print "Would you like to play from a saved game? (Y/N) "
       answer = gets.chomp
-      if /[Yy]([Ee][Ss])?/ ~  answer
+      if /[Yy]([Ee][Ss])?/ =~  answer
         load_game()
       else
-        @board = Board.new
-        player_names = setup()
-        @white_player = player_names.first
-        @black_player = player_names.last
-        @turn_num = 0
-        @game = GameEngine.new(@game, @white_player, @black_player)
+        init()
       end
     end
 
@@ -26,18 +22,29 @@ module Chess
       game_is_over = game_over?
       until game_is_over
         print "Would you like to save the game? (Y/N) "
-	save? = gets.chomp
-	if save?
+      	save = gets.chomp
+	      if save
           save_game
-	end
+	      end
         game_loop() #modifies program state
-	@turn_num = @turn_num + 1
-	game_is_over = game_over?
+	      @turn_num = @turn_num + 1
+	      game_is_over = game_over?
       end
       winner = game_is_over
       return winner
     end
-    private 
+
+    private
+
+    def init
+        player_names = setup()
+        @white_player = player_names.first
+        @black_player = player_names.last
+        @turn_num = 0
+        @game = GameEngine.new
+    end
+
+    #TODO - FIRST - fix game loop 
     def game_loop
      puts @game.to_s
      puts "It is turn."
@@ -48,7 +55,7 @@ module Chess
        is_valid = @game.is_valid?(move)
      end
      @game.make_move(move)
-     "Player # 
+     "It is #{current_player}'s turn."
 
     end
     def setup
@@ -61,7 +68,7 @@ module Chess
       return [p1, p2]
     end
 
-    game_over?
+    def game_over?
       @game.game_over?
     end
 
@@ -72,20 +79,47 @@ module Chess
     def save_game
       puts "Please enter a filename to save."
       filename = gets.chomp
+      if File.exists?(filename)
+        puts "Are you sure you want to overwrite #{filename}? (Y/N)"
+        answer = gets.chomp
+        if /[Yy]([Ee][Ss])?/ =~  answer
+          overwrite = true
+        end
+
+        if overwrite || overwrite.nil?
+          begin
+            File.open(filename, 'w') {|f| r.write self.to_yaml}
+          rescue
+            puts "Sorry. Save error. Returning to game".
+            return 0
+          end
+        end
+
       puts "Would you like to quit? (Y/N)"
-      quit? = gets.chomp      
-      if quit?
+      quit = gets.chomp      
+      if /[Yy]([Ee][Ss])?/ =~  quit
         puts "Thanks for playing!"
-	exit!
+	      exit!
       end
     end
+
     def load_game
       puts "Give a filename."
-
+      filename = gets.chomp
+      begin
+        other_game = yaml.load_file(filename)
+        @game = other_game.game
+        @turn_num = other_game.turn_num
+        @white_player = other_game.white_player
+        @black_player = other_game.black_player
+      rescue
+        puts "Sorry. File load error. Starting new game."
+        init()
+      end
     end
   end
 
 end
-
-chess = Chess.new
-chess.play
+include Chess
+#chess = Chess::Chess.new
+#chess.play
