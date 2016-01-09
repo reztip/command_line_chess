@@ -1,5 +1,5 @@
 require_relative "../chess.rb"
-
+require_relative "./board_characters.rb"
 module Chess
   class Board
     attr_reader :n, :row_labels, :column_labels
@@ -19,6 +19,11 @@ module Chess
     def piece_at(x,y) # I operate under the assumption that 
       y = (@@column_labels.include?(y) ? @@label_map[y] : y)
       return @board[x - 1][y]
+    end
+
+    def to_s
+      b_board = blank_board()
+      b_board
     end
 
     private
@@ -64,6 +69,25 @@ module Chess
       @board[7][4] = King.new(:black, [7, 4])
       #end setup
     end
+
+
+
+
+    def blank_board
+      middle_row = (0..17).map {|x| x.even? ? '|' : ' '}
+      board = []
+      (0..17).each do |i|
+        board += [
+          x.even? ? blank_row() : middle_row
+        ]
+      end
+      return board
+    end
+
+    def blank_row #an inner blank_row
+      return ['-']*17
+    end
+
 
   end
 
