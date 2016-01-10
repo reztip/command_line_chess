@@ -1,4 +1,9 @@
-require_relative "../chess.rb"
+# board_characters.
+require_relative "../game.rb"
+require_relative "./pieces.rb"
+require_relative "./board.rb"
+require_relative "./board_characters.rb"  
+require_relative "./game_engine.rb"  
 module Chess
   BLACK_KNIGHT_REPRESENTATION = "\u2658"
   WHITE_KNIGHT_REPRESENTATION = "\u265E"

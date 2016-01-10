@@ -1,5 +1,9 @@
-require_relative "../chess.rb"
-
+#game_engine.rb
+require_relative "../game.rb"
+require_relative "./pieces.rb"
+require_relative "./board.rb"
+require_relative "./board_characters.rb"  
+require_relative "./game_engine.rb"  
 module Chess
  class GameEngine
    def initialize
@@ -22,6 +26,12 @@ module Chess
 
    def to_s
     @board.to_s
+   end
+
+   def game_over?
+   end
+
+   def is_valid?
    end
 
 

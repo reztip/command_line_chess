@@ -1,6 +1,9 @@
-require_relative "../chess.rb"
-require_relative "./board_characters.rb"
-
+# pieces.rb
+require_relative "../game.rb"
+require_relative "./pieces.rb"
+require_relative "./board.rb"
+require_relative "./board_characters.rb"  
+require_relative "./game_engine.rb"  
 
 module Chess
 
@@ -72,7 +75,7 @@ module Chess
       pos_x = @position.first
       pos_y = @position.last
       positions = []
-      if color == :white && pos_y = 1
+      if color == :white && pos_y == 1
         positions << [pos_x, pos_y + 2]
         if (pos_x == 0 && pos_y < 7)
           positions << [pos_x, pos_y + 1]
@@ -117,15 +120,9 @@ module Chess
     def potential_moves
       pos_x = @position.first
       pos_y = @position.last
-      return [ [pos_x + 1, pos_y + 2],
-        [pos_x + 1, pos_y - 2],
-        [pos_x + 2, pos_y + 1],
-        [pos_x + 2, pos_ y - 1],
-        [pos_x - 1, pos_y + 2],
-        [pos_x - 1, pos_y - 2],
-        [pos_x - 2, pos_y + 1],
-        [pos_x = 2, pos_y - 1]
-        ].select {|pos| pos.first.between(0,7) && pos.last.between(0,7)}
+      px = [ [pos_x + 1, pos_y + 2],[pos_x + 1, pos_y - 2],[pos_x + 2, pos_y + 1], [pos_x + 2, pos_y - 1],[pos_x - 1, pos_y + 2],[pos_x - 1, pos_y - 2],[pos_x - 2, pos_y + 1],[pos_x - 2, pos_y - 1]]
+      puts px
+      return px.select {|pos| pos.first.between(0,7) && pos.last.between(0,7)}
     end
   end
 

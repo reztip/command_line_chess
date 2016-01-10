@@ -1,6 +1,9 @@
-require_relative "../chess.rb"
-require_relative "./board_characters.rb"
-
+#board.rb
+require_relative "../game.rb"
+require_relative "./pieces.rb"
+require_relative "./board.rb"
+require_relative "./board_characters.rb"  
+require_relative "./game_engine.rb"  
 
 
 module Chess
@@ -70,6 +73,7 @@ module Chess
       #end setup
     end
     def fill_black
+      require_relative "./pieces.rb"
       (0..7).each do |col|
         # puts @@n
         @board[6][col] = Pawn.new(:black, [6, col])
@@ -109,22 +113,8 @@ module Chess
   
   end
 end
-
-def main
-  include Chess
-  b = Board.new
-  x = 1
-  b.board.each do |row|
-     row.each do |piece|
-      piece = " " if piece.nil?
-      puts piece.to_s + ": #{piece.color.to_s} + #{piece.type.to_s}, piece number #{x} at location #{piece.location()}" if piece.is_a? Pieces
-      x = x + 1
-    end
-     # puts a
-  end
-  puts nil
-end
-
-# include Chess
+include Chess
+# a = King.new
+# puts Chess.constants
 # b = Board.new
 # puts b.to_s
