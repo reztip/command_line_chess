@@ -6,8 +6,10 @@ module Chess
      @board = Board.new
    end
 
-   def valid_moves(position) # position should be 
-     piece = @board.piece_at(position)
+   def valid_moves(position) # position should be
+     position_x = position[0]
+     position_y = position[-1].to_i
+     piece = @board.piece_at(position_x, position_y)
      return nil if piece.nil? #quick optimization, also prevents runtime errors
      potential_moves = piece.potential_moves
      legal_moves = @board.legal_moves(piece, potential_moves)

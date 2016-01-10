@@ -23,7 +23,7 @@ module Chess
 
     def piece_at(x,y) # I operate under the assumption that pieceat is 1-8 or A-H
       # x = (@@column_labels.include?(x) ? @@label_map[x] : x)
-      y = (@@column_labels.include?(y.to_s.upcase) ? @@label_map[y.to_s.upcase] : y) if  y =~ /[[:alpha:]]/
+      x = (@@column_labels.include?(x.to_s.upcase) ? @@label_map[x.to_s.upcase] : x) if  x =~ /[[:alpha:]]/
       return @board[x - 1][y - 1]
     end
 
@@ -39,6 +39,12 @@ module Chess
     end
 
     private
+    def move_piece(from_x, from_y, to_x, to_y) #from should be like [1,2], to should be like[3,2]
+      piece = piece_at(from_x, from_y)
+      @board[to_x - 1][to_y - 1] = piece
+      @board[from_x -1 ][from_y - 1] = nil
+    end
+
 
     def fill_board
       fill_white()
@@ -84,10 +90,6 @@ module Chess
     end
 
 
-
-    public
-
-
     def blank_row #an inner blank_row
       return "   " + (['--']*16 + ["\n"]).join
     end
@@ -102,9 +104,9 @@ module Chess
       end
       s << "\n"
       s = i.to_s.rjust(2, " ") + " " + s
-    return s #.slice((s.length/2)..-1)
+      return s #.slice((s.length/2)..-1)
     end
-
+  
   end
 end
 
@@ -123,6 +125,6 @@ def main
   puts nil
 end
 
-include Chess
+# include Chess
 # b = Board.new
 # puts b.to_s
