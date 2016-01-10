@@ -59,7 +59,7 @@ module Chess
        is_valid = @game.is_valid?(move)
      end
      @game.make_move(move)
-     "It is #{current_player}'s turn."
+     "It is #{current_player.to_s}'s turn."
     end
 
     def setup
@@ -89,22 +89,26 @@ module Chess
         if /[Yy]([Ee][Ss])?/ =~  answer
           overwrite = true
         end
-
-        if overwrite || overwrite.nil?
+        if overwrite
           begin
-            File.open(filename, 'w') {|f| r.write self.to_yaml}
+            File.open(filename, 'w') {|f| f.write self.to_yaml}
           rescue
-            puts "Sorry. Save error. Returning to game".
-            return 0
+            puts "Sorry. Save error. Returning to game."
           end
         end
+      else
+        begin
+            File.open(filename, 'w') {|f| f.write self.to_yaml}
+        rescue
+            puts "Sorry. Save error. Returning to game."
 
+        end
+      end
       puts "Would you like to quit? (Y/N)"
       quit = gets.chomp      
       if /[Yy]([Ee][Ss])?/ =~  quit
         puts "Thanks for playing!"
 	      exit!
-      end
       end
    end
 

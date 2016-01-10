@@ -31,7 +31,7 @@ module Chess
    def game_over?
    end
 
-   def is_valid?
+   def is_valid?(ok)
    end
 
 
