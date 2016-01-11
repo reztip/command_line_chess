@@ -44,31 +44,50 @@ module Chess
     def checkmate? #TODO STUB
     end
 
-    def is_valid?(mv)
-      move = parse_move(mv)
-      piece  = piece_at(move.first + 1, move.last + 1)
+    def is_valid?(mv, turnnum)
+      from = parse_move(mv.first)
+      to = parse_move(mv.last)
+      player_color = ( turnnum.even? ? :white : :black)
+      piece  = piece_at(from.first + 1, from.last + 1)
       return false if piece.nil?
       color = piece.color
-      ptype = piece.type
-      if color == :white
-        
-      else
-
-      end
-
-
+      return false if player_color != color
+      return is_valid(from, to, piece,color)
     end
 
     private
+
+    def is_valid(from, to, piece, color)
+      potential_moves = piece_potential_moves(piece) #a list of positions of form [0, 6] which is the position's piece on the array
+      return false if potential_moves.nil?
+      return potential_moves.include?(to)
+    end
+
+    def other_color(color)
+      return (color == :white) ? :black : :white
+    end
+
     def move_piece(from_x, from_y, to_x, to_y) #from should be like [1,2], to should be like[3,2]
       piece = piece_at(from_x, from_y)
       @board[to_x - 1][to_y - 1] = piece
       @board[from_x -1 ][from_y - 1] = nil
     end
 
+    def piece_potential_moves(piece)
+      potential_moves = piece.potential_moves #a list of positions of form [0, 6] which is the position's piece on the array
+      return nil if potential_moves.nil? || potential_moves.empty?
+      potential_moves.select! {|pos| piece_at(pos.first + 1, pos.last + 1) == nil || piece_at(pos.first + 1, pos.last + 1).color == other_color(piece.color)  }
+      actual_moves = actual_possible_moves(piece, potential_moves)
+      return actual_moves
+    end
+
+    def actual_possible_moves(piece, potential_moves)
+      
+    end
+
     def parse_move(move)
       x = @@label_map[move[0].upcase] - 1
-      y = move[1].to_i
+      y = move[1].to_i - 1
       return [x,y]
     end
 

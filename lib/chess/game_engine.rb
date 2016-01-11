@@ -33,8 +33,8 @@ module Chess
    end
 
 
-   def is_valid?(move) #currently a stub
-    @board.is_valid?(move)
+   def is_valid?(move, turn_number) #currently a stub
+    @board.is_valid?(move, turn_number)
    end
 
    def piece_at(pos)

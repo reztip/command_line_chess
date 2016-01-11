@@ -40,7 +40,6 @@ module Chess
     private
 
     def init
-      # require_relative "./chess/game_engine.rb"  
         player_names = setup()
         @white_player = player_names.first
         @black_player = player_names.last
@@ -53,10 +52,10 @@ module Chess
      puts @game.to_s
      puts "It is #{current_player()}'s turn."
      move = receive_move()
-     is_valid = @game.is_valid?(move)
+     is_valid = @game.is_valid?(move, @turn_num)
      until is_valid
        move = receive_move()
-       is_valid = @game.is_valid?(move)
+       is_valid = @game.is_valid?(move, @turn_num)
      end
      @game.make_move(move)
      "It is #{current_player.to_s}'s turn."
@@ -72,7 +71,7 @@ module Chess
       return [p1, p2]
     end
 
-    def checkmate?
+    def checkmate? #say :white or :black
       @game.checkmate?
     end
 
@@ -114,8 +113,8 @@ module Chess
 	      exit!
       end
    end
-
-   def receive_move #a request to move a piece from something to somewhere else
+    #receive move should return something like ['A2', 'B3']
+    def receive_move #a request to move a piece from something to somewhere else
      print "Where is the piece you want to move (e.g., B2)? "
      move = gets.chomp
      valid_selection = false
@@ -125,6 +124,7 @@ module Chess
        print "Sorry, not a valid place on the board. Try something like A7. "
        move = gets.chomp
      end
+     m1 = move
      print "Where would you like to move the piece to? "
      move = gets.chomp
      valid_selection = false
@@ -134,10 +134,10 @@ module Chess
        print "Sorry, not a valid place on the board. Try something like A7. "
        move = gets.chomp
      end
-     return move.upcase
-   end
+     m2 = move
+     return [m1.upcase, m2.upcase]
+    end
 
-    public
     def load_game
       puts "Give a filename."
       filename = gets.chomp 
@@ -153,7 +153,7 @@ module Chess
         init()
       end
     end
-  end
+end
 
 end
 include Chess
