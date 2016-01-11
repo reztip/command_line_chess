@@ -58,9 +58,9 @@ module Chess
     private
 
     def is_valid(from, to, piece, color)
-      potential_moves = piece_potential_moves(piece) #a list of positions of form [0, 6] which is the position's piece on the array
-      return false if potential_moves.nil?
-      return potential_moves.include?(to)
+      legal_moves = piece_moves(piece) #a list of positions of form [0, 6] which is the position's piece on the array
+      return false if legal_moves.nil? || legal_moves.empty?
+      return legal_moves.include?(to)
     end
 
     def other_color(color)
@@ -73,7 +73,7 @@ module Chess
       @board[from_x -1 ][from_y - 1] = nil
     end
 
-    def piece_potential_moves(piece)
+    def piece_moves(piece)
       potential_moves = piece.potential_moves #a list of positions of form [0, 6] which is the position's piece on the array
       return nil if potential_moves.nil? || potential_moves.empty?
       potential_moves.select! {|pos| piece_at(pos.first + 1, pos.last + 1) == nil || piece_at(pos.first + 1, pos.last + 1).color == other_color(piece.color)  }
@@ -82,7 +82,37 @@ module Chess
     end
 
     def actual_possible_moves(piece, potential_moves)
+      p_type = piece.type
+      case p_type
+
+      when :king, :knight #unrestricted mvoement except for same-color pieces
+        return potential_moves
+
+      when :pawn
+        return pawn_moves(piece, potential_moves)
+
+      when :bishop
+        return bishop_moves(piece, potential_moves)
+      when :rook
+        return rook_moves(piece, potential_moves)
+      else #:queen
+        return queen_moves(piece, potential_moves)
+      end
+    end
+
+    def pawn_moves(piece, potential_moves)
+      location = piece.position
+      color = piece.color
       
+    end
+
+    def bishop_moves(piece, moves)
+    end
+
+    def rook_moves(piece, moves)
+    end
+
+    def queen_moves(piece, moves)
     end
 
     def parse_move(move)
