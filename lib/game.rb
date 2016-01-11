@@ -52,6 +52,7 @@ module Chess
      puts @game.to_s
      puts "It is #{current_player()}'s turn."
      move = receive_move()
+     puts move
      is_valid = @game.is_valid?(move, @turn_num)
      until is_valid
        move = receive_move()
@@ -116,7 +117,7 @@ module Chess
     #receive move should return something like ['A2', 'B3']
     def receive_move #a request to move a piece from something to somewhere else
      print "Where is the piece you want to move (e.g., B2)? "
-     move = gets.chomp
+     move = gets.chomp.upcase
      valid_selection = false
      until valid_selection
        valid_selection = (('A'..'Z').include?(move[0]) && (1..8).include?(move[1].to_i))
@@ -126,7 +127,7 @@ module Chess
      end
      m1 = move
      print "Where would you like to move the piece to? "
-     move = gets.chomp
+     move = gets.chomp.upcase
      valid_selection = false
      until valid_selection
       valid_selection = (('A'..'Z').include?(move[0]) && (1..8).include?(move[1].to_i))
@@ -135,7 +136,7 @@ module Chess
        move = gets.chomp
      end
      m2 = move
-     return [m1.upcase, m2.upcase]
+     return [m1, m2]
     end
 
     def load_game

@@ -27,7 +27,7 @@ module Chess
     def piece_at(x,y) # I operate under the assumption that pieceat is 1-8 or A-H
       # x = (@@column_labels.include?(x) ? @@label_map[x] : x)
       x = (@@column_labels.include?(x.to_s.upcase) ? @@label_map[x.to_s.upcase] : x) if  x =~ /[[:alpha:]]/
-      return @board[x - 1][y - 1]
+      return @board[y - 1][x - 1]
     end
 
     def to_s
@@ -69,12 +69,13 @@ module Chess
 
     def move_piece(from_x, from_y, to_x, to_y) #from should be like [1,2], to should be like[3,2]
       piece = piece_at(from_x, from_y)
-      @board[to_x - 1][to_y - 1] = piece
-      @board[from_x -1 ][from_y - 1] = nil
+      @board[to_y - 1][to_x - 1] = piece
+      @board[from_y -1 ][from_x - 1] = nil
     end
 
     def piece_moves(piece)
       potential_moves = piece.potential_moves #a list of positions of form [0, 6] which is the position's piece on the array
+      p potential_moves
       return nil if potential_moves.nil? || potential_moves.empty?
       potential_moves.select! {|pos| piece_at(pos.first + 1, pos.last + 1) == nil || piece_at(pos.first + 1, pos.last + 1).color == other_color(piece.color)  }
       actual_moves = actual_possible_moves(piece, potential_moves)
@@ -128,7 +129,7 @@ module Chess
       until (i > 7 || j > 7)
         other_piece = piece_at(i+1, j+1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         i = i + 1
@@ -138,7 +139,7 @@ module Chess
       until (i > 7 || j < 0)
         other_piece = piece_at(i+1, j+1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         i = i + 1
@@ -148,7 +149,7 @@ module Chess
       until (i < 0 || j > 7)
         other_piece = piece_at(i+1, j+1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         i = i - 1
@@ -158,7 +159,7 @@ module Chess
       until (i < 0 || j < 0)
         other_piece = piece_at(i+1, j+1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         i = i - 1
@@ -177,7 +178,7 @@ module Chess
       until (i > 7 )
         other_piece = piece_at(i+1, y + 1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         i = i + 1
@@ -186,7 +187,7 @@ module Chess
       until (i < 0 )
         other_piece = piece_at(i+1, y + 1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         i = i - 1
@@ -195,7 +196,7 @@ module Chess
       until (j < 0 )
         other_piece = piece_at(x+1, j + 1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         j = j - 1
@@ -204,7 +205,7 @@ module Chess
       until (j > 7 )
         other_piece = piece_at(x+1, j + 1)
         blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
         blocked_count = blocked_count + 1 if blocked_by_other_team
         moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
         j = j_+ 1
@@ -407,8 +408,9 @@ module Chess
       pos_x = @position.first
       pos_y = @position.last
       px = [ [pos_x + 1, pos_y + 2],[pos_x + 1, pos_y - 2],[pos_x + 2, pos_y + 1], [pos_x + 2, pos_y - 1],[pos_x - 1, pos_y + 2],[pos_x - 1, pos_y - 2],[pos_x - 2, pos_y + 1],[pos_x - 2, pos_y - 1]]
-      puts px
-      return px.select {|pos| pos.first.between(0,7) && pos.last.between(0,7)}
+      # puts px
+       px.select! {|pos| pos.first.between?(0,7) && pos.last.between?(0,7)}
+       return px
     end
   end
 
@@ -420,7 +422,8 @@ module Chess
     def potential_moves
       pos_x = @position.first
       pos_y = @position.last
-
+      # puts pos_x
+      # puts pos_y
       i = 1
       j = 1
       positions = []
