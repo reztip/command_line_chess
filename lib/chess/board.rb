@@ -102,11 +102,24 @@ module Chess
 
     def pawn_moves(piece, potential_moves)
       location = piece.position
+      x = location.first
       color = piece.color
-      
+      othercolor = other_color(color)
+      pm = Array.new(potential_moves)
+      pm.each do |new_loc|
+        new_x = new_loc.first + 1
+        new_y = new_loc.last + 1
+        other_piece = piece_at(new_x, new_y)
+        potential_moves.delete(new_loc) if !other_piece.nil? && other_piece.location.first == x #pawn is blocked by stuff in front of it
+        potential_moves.delete(new_loc) if (other_piece.nil? || color == other_color) && other_piece.location.first != x #pawn is blocked by stuff in front of it
+      end
+      potential_moves.delete_if {|pos| !potential_moves.include?([pos.first, pos.last - 1]) } if color == :white #need to filter out the starting 2x move if something is in the way
+      potential_moves.delete_if {|pos| !potential_moves.include?([pos.first, pos.last + 1]) } if color == :black
+      return potential_moves
     end
 
     def bishop_moves(piece, moves)
+
     end
 
     def rook_moves(piece, moves)
