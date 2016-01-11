@@ -22,7 +22,7 @@ module Chess
     end
 
     def play
-      game_is_over = game_over?
+      game_is_over = checkmate?
       until game_is_over
         print "Would you like to save the game? (Y/N) "
       	save = gets.chomp
@@ -31,7 +31,7 @@ module Chess
 	      end
         game_loop() #modifies program state
 	      @turn_num = @turn_num + 1
-	      game_is_over = game_over?
+	      game_is_over = checkmate?
       end
       winner = game_is_over
       return winner
@@ -51,7 +51,7 @@ module Chess
     #TODO - FIRST - fix game loop 
     def game_loop
      puts @game.to_s
-     puts "It is turn."
+     puts "It is #{current_player()}'s turn."
      move = receive_move()
      is_valid = @game.is_valid?(move)
      until is_valid
@@ -72,9 +72,10 @@ module Chess
       return [p1, p2]
     end
 
-    def game_over?
-      @game.game_over?
+    def checkmate?
+      @game.checkmate?
     end
+
 
     def current_player
       turn_num.even? ? @white_player : @black_player
@@ -91,13 +92,15 @@ module Chess
         end
         if overwrite
           begin
-            File.open(filename, 'w') {|f| f.write self.to_yaml}
+            filename = filename + '.yml' if filename.slice(-4..-1) != '.yml'
+            File.open(filename , 'w') {|f| f.write self.to_yaml}
           rescue
             puts "Sorry. Save error. Returning to game."
           end
         end
       else
         begin
+            filename = filename + '.yml' if filename.slice(-4..-1) != '.yml'
             File.open(filename, 'w') {|f| f.write self.to_yaml}
         rescue
             puts "Sorry. Save error. Returning to game."
@@ -112,7 +115,26 @@ module Chess
       end
    end
 
-   def receive_move
+   def receive_move #a request to move a piece from something to somewhere else
+     print "Where is the piece you want to move (e.g., B2)? "
+     move = gets.chomp
+     valid_selection = false
+     until valid_selection
+       valid_selection = (('A'..'Z').include?(move[0]) && (1..8).include?(move[1].to_i))
+       break if valid_selection
+       print "Sorry, not a valid place on the board. Try something like A7. "
+       move = gets.chomp
+     end
+     print "Where would you like to move the piece to? "
+     move = gets.chomp
+     valid_selection = false
+     until valid_selection
+      valid_selection = (('A'..'Z').include?(move[0]) && (1..8).include?(move[1].to_i))
+       break if valid_selection
+       print "Sorry, not a valid place on the board. Try something like A7. "
+       move = gets.chomp
+     end
+     return move.upcase
    end
 
     public
@@ -120,7 +142,7 @@ module Chess
       puts "Give a filename."
       filename = gets.chomp
       begin
-        other_game = yaml.load_file(filename)
+        other_game = YAML::load_file(filename)
         @game = other_game.game
         @turn_num = other_game.turn_num
         @white_player = other_game.white_player
@@ -133,6 +155,6 @@ module Chess
   end
 
 end
-include Chess
-chess = Chess::Game.new
-chess.play
+# include Chess
+# chess = Chess::Game.new
+# chess.play

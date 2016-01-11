@@ -11,7 +11,7 @@ module Chess
    end
 
    def valid_moves(position) # position should be
-     position_x = position[0]
+     position_x = position[0].upcase
      position_y = position[-1].to_i
      piece = @board.piece_at(position_x, position_y)
      return nil if piece.nil? #quick optimization, also prevents runtime errors
@@ -28,10 +28,17 @@ module Chess
     @board.to_s
    end
 
-   def game_over?
+   def checkmate?
+    @board.checkmate?
    end
 
-   def is_valid?(ok)
+
+   def is_valid?(move) #currently a stub
+    @board.is_valid?(move)
+   end
+
+   def piece_at(pos)
+    @board.piece_at(pos[0].upcase, pos[-1].to_i)
    end
 
 

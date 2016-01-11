@@ -41,11 +41,35 @@ module Chess
       return s
     end
 
+    def checkmate? #TODO STUB
+    end
+
+    def is_valid?(mv)
+      move = parse_move(mv)
+      piece  = piece_at(move.first + 1, move.last + 1)
+      return false if piece.nil?
+      color = piece.color
+      ptype = piece.type
+      if color == :white
+
+      else
+
+      end
+
+
+    end
+
     private
     def move_piece(from_x, from_y, to_x, to_y) #from should be like [1,2], to should be like[3,2]
       piece = piece_at(from_x, from_y)
       @board[to_x - 1][to_y - 1] = piece
       @board[from_x -1 ][from_y - 1] = nil
+    end
+
+    def parse_move(move)
+      x = @@label_map[move[0].upcase] - 1
+      y = move[1].to_i
+      return [x,y]
     end
 
 
@@ -205,7 +229,8 @@ module Chess
           positions << [pos_x + 1, pos_y - 1]
         
         elsif (pos_x == 7 && pos_y > 0)
-          positions << [pos_x, pos_y - 1]
+          posi
+    endtions << [pos_x, pos_y - 1]
           positions << [pos_x - 1, pos_y - 1]
 
         elsif pos_y > 0
