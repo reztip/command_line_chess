@@ -10,7 +10,7 @@ require_relative "./game.rb"
 module Chess
   # Your code goes here...
   class Game
-    attr_reader :turn_num, :white_player, :black_player
+    attr_reader :turn_num, :white_player, :black_player, :game
     def initialize
       print "Would you like to play from a saved game? (Y/N) "
       answer = gets.chomp
@@ -140,8 +140,9 @@ module Chess
     public
     def load_game
       puts "Give a filename."
-      filename = gets.chomp
-      begin
+      filename = gets.chomp 
+      filename = filename + ".yml" if filename.slice(-4..-1) != '.yml'
+      begin 
         other_game = YAML::load_file(filename)
         @game = other_game.game
         @turn_num = other_game.turn_num
@@ -155,6 +156,6 @@ module Chess
   end
 
 end
-# include Chess
-# chess = Chess::Game.new
-# chess.play
+include Chess
+chess = Chess::Game.new
+chess.play

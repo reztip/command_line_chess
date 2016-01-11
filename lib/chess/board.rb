@@ -51,7 +51,7 @@ module Chess
       color = piece.color
       ptype = piece.type
       if color == :white
-
+        
       else
 
       end
