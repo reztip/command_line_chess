@@ -4,7 +4,7 @@ require_relative "./pieces.rb"
 require_relative "./board.rb"
 require_relative "./board_characters.rb"  
 require_relative "./game_engine.rb"  
-
+require 'set'
 
 module Chess
   class Board
@@ -119,13 +119,106 @@ module Chess
     end
 
     def bishop_moves(piece, moves)
-
+      loc = piece.location
+      x = loc.first
+      y = first.last
+      i = x + 1
+      j = y + 1
+      blocked_count = 0
+      until (i > 7 || j > 7)
+        other_piece = piece_at(i+1, j+1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        i = i + 1
+        j = j + 1
+      end
+      i = x + 1 ; j = y - 1; blocked_count = 0
+      until (i > 7 || j < 0)
+        other_piece = piece_at(i+1, j+1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        i = i + 1
+        j = j - 1
+      end
+       i = x -1 ; j = y + 1; blocked_count = 0
+      until (i < 0 || j > 7)
+        other_piece = piece_at(i+1, j+1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        i = i - 1
+        j = j + 1
+      end
+       i = x -1 ; j = y - 1; blocked_count = 0
+      until (i < 0 || j < 0)
+        other_piece = piece_at(i+1, j+1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        i = i - 1
+        j = j - 1
+      end
+      return moves
     end
 
     def rook_moves(piece, moves)
+      loc = piece.location
+      x = loc.first
+      y = first.last
+      i = x + 1
+      j = y
+      blocked_count = 0
+      until (i > 7 )
+        other_piece = piece_at(i+1, y + 1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        i = i + 1
+      end
+      i = x - 1
+      until (i < 0 )
+        other_piece = piece_at(i+1, y + 1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        i = i - 1
+      end
+      i = x; j = y - 1
+      until (j < 0 )
+        other_piece = piece_at(x+1, j + 1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        j = j - 1
+      end
+      i = x; j = y - 1
+      until (j > 7 )
+        other_piece = piece_at(x+1, j + 1)
+        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
+        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color
+        blocked_count = blocked_count + 1 if blocked_by_other_team
+        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
+        j = j_+ 1
+      end 
+      return moves
     end
 
     def queen_moves(piece, moves)
+      mv = Array.new(moves)
+      r = rook_moves(piece, moves)
+      r = [] if r.nil?
+      b = bishop_moves(piece, mv)
+      b = [] if b.nil?
+      return r + b
     end
 
     def parse_move(move)
