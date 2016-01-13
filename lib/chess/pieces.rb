@@ -27,7 +27,9 @@ module Chess
       @position = position
       @representation = @@REP_MAP[@type][@color]
     end
-
+    def equal?(other)
+     !other.nil? && other.color == @color && other.type == @type && other.position == @position
+    end
     def to_s
       return @representation
     end

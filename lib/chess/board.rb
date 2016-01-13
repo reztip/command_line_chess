@@ -228,6 +228,11 @@ module Chess
       return [x,y]
     end
 
+    def set_piece(x, y, piece) #x is A-H, y is 1-8
+      # x = (@@column_labels.include?(x) ? @@label_map[x] : x)
+      x = (@@column_labels.include?(x.to_s.upcase) ? @@label_map[x.to_s.upcase] : x) if  x =~ /[[:alpha:]]/
+      @board[y - 1][x - 1] = piece
+    end
 
     def fill_board
       fill_white()
@@ -235,42 +240,43 @@ module Chess
     end
 
     def fill_white
-      (0..7).each do |col|
-        @board[1][col] = Pawn.new(:white, [1, col])
+      ('A'..'H').each do |x|
+        col = @@label_map[x] - 1
+        #first position is the row index, then the column index. Position is raw row/column. accessible as b[r][c] for [r,c]  as args to Piece
+        set_piece(x, 2, Pawn.new(:white, [1, col]))
       end
       #enter royal pieces
-      @board[0][0] = Rook.new(:white, [0,0])
-      @board[0][@@n-1] = Rook.new(:white, [0,@@n-1])
+      set_piece("A", 1, Rook.new(:white, [0,0]))
+      set_piece("H", 1, Rook.new(:white, [0,7]))
 
-      @board[0][1] = Knight.new(:white, [0, 1])
-      @board[0][@@n-2] = Knight.new(:white, [0, @@n - 2])
+      set_piece("B", 1, Knight.new(:white, [0, 1]))
+      set_piece("G",1, Knight.new(:white, [0, 6]))
 
-      @board[0][2] = Bishop.new(:white, [0, 2])
-      @board[0][@@n - 3] = Bishop.new(:white, [0,  @@n - 3])
+      set_piece("C", 1, Bishop.new(:white, [0, 2]))
+      set_piece("F", 1, Bishop.new(:white, [0, 5]))
 
-      @board[0][3] = Queen.new(:white, [0, 3])
-      @board[0][4] = King.new(:white, [0, 4])
+      set_piece( "D", 1,Queen.new(:white, [0, 3]))
+      set_piece( "E", 1,King.new(:white, [0, 4]))
       #end setup
     end
     def fill_black
-      require_relative "./pieces.rb"
-      (0..7).each do |col|
-        # puts @@n
-        @board[6][col] = Pawn.new(:black, [6, col])
+      ('A'..'H').each do |x|
+        col = @@label_map[x] - 1
+        #first position is the row index, then the column index. Position is raw row/column. accessible as b[r][c]
+        set_piece(x, 7, Pawn.new(:black, [6, col]))
       end
       #enter royal pieces
-      @board[7][0] = Rook.new(:black, [7,0])
-      @board[7][@@n-1] = Rook.new(:black, [7,@@n-1])
+      set_piece("A", 8, Rook.new(:black, [7,0]))
+      set_piece("H", 8, Rook.new(:black, [7,7]))
 
-      @board[7][1] = Knight.new(:black, [7, 1])
-      @board[7][@@n-2] = Knight.new(:black, [7, @@n - 2])
+      set_piece("B", 8, Knight.new(:black, [7, 1]))
+      set_piece("G",8, Knight.new(:black, [7, 6]))
 
-      @board[7][2] = Bishop.new(:black, [7, 2])
-      @board[7][@@n - 3] = Bishop.new(:black, [7,  @@n - 3])
+      set_piece("C", 8, Bishop.new(:black, [7, 2]))
+      set_piece("F", 8, Bishop.new(:black, [7, 5]))
 
-      @board[7][3] = Queen.new(:black, [7, 3])
-      @board[7][4] = King.new(:black, [7, 4])
-      #end setup
+      set_piece( "D", 8,Queen.new(:black, [7, 3]))
+      set_piece( "E", 8,King.new(:black, [7, 4]))
     end
 
 
@@ -283,7 +289,7 @@ module Chess
     def actual_row(i) #i between 1 and 8, return as string
       s = "|"
       (1..8).each do |j|
-        x = piece_at(i,j)
+        x = piece_at(j,i)
         s << (x.nil? ?  " " : x.to_s) + " | "
       end
       s << "\n"
@@ -312,6 +318,9 @@ module Chess
       @type = type
       @position = position
       @representation = @@REP_MAP[@type][@color]
+    end
+    def equal?(other)
+     !other.nil? && other.color == @color && other.type == @type && other.position == @position
     end
 
     def to_s

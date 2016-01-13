@@ -157,6 +157,6 @@ module Chess
 end
 
 end
-include Chess
-chess = Chess::Game.new
-chess.play
+# include Chess
+# chess = Chess::Game.new
+# chess.play
