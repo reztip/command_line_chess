@@ -323,6 +323,16 @@ module Chess
      !other.nil? && other.color == @color && other.type == @type && other.position == @position
     end
 
+    def ==(other)
+     !other.nil? && other.color == @color && other.type == @type && other.position == @position
+    end
+
+    def ===(other)
+     !other.nil? && other.color == @color && other.type == @type && other.position == @position
+    end
+
+
+
     def to_s
       return @representation
     end
