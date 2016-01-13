@@ -47,19 +47,19 @@ module Chess
     end
 
     def is_valid?(mv, turnnum)
-      from = parse_move(mv.first)
-      to = parse_move(mv.last)
+      from = mv.first
+      to = mv.last
       player_color = ( turnnum.even? ? :white : :black)
       piece  = piece_at(from.first + 1, from.last + 1)
       return false if piece.nil?
       color = piece.color
       return false if player_color != color
-      return is_valid(from, to, piece,color)
+      return is_valid( to, piece,color)
     end
 
     private
 
-    def is_valid(from, to, piece, color)
+    def is_valid( to, piece, color)
       legal_moves = piece_moves(piece) #a list of positions of form [0, 6] which is the position's piece on the array
       return false if legal_moves.nil? || legal_moves.empty?
       return legal_moves.include?(to)
@@ -67,6 +67,10 @@ module Chess
 
     def other_color(color)
       return (color == :white) ? :black : :white
+    end
+
+    def move_piece(destination, piece)
+      piece.update_location(destination) #let destination be of the form A5
     end
 
     def move_piece(from_x, from_y, to_x, to_y) #from should be like [1,2], to should be like[3,2]

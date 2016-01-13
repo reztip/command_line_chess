@@ -38,7 +38,7 @@ module Chess
    end
 
    def piece_at(pos)
-    @board.piece_at(pos[0].upcase, pos[-1].to_i)
+    @board.piece_at(pos)
    end
 
 

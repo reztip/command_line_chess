@@ -126,7 +126,7 @@ module Chess
      move = gets.chomp.upcase
      valid_selection = false
      until valid_selection
-       valid_selection = (move ~= /[A-Ha-h][1-8]/)
+       valid_selection = (move =~ /[A-Ha-h][1-8]/)
        break if valid_selection
        print "Sorry, not a valid place on the board. Try something like A7. "
        move = gets.chomp
