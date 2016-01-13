@@ -14,6 +14,8 @@ module Chess
     @@column_labels = ('A'..'H').to_a
     @@label_map = {'A' => 1, 'B' => 2, 'C' => 3, 'D'=> 4, 'E' => 5, 'F' => 6, 'G' => 7, 'H' => 8}
     def initialize
+    @white_list = []
+    @black_list = []
       #make an 8 by 8 square, starting with nil
       @board = []
      (0..8).each do |i|
@@ -243,40 +245,72 @@ module Chess
       ('A'..'H').each do |x|
         col = @@label_map[x] - 1
         #first position is the row index, then the column index. Position is raw row/column. accessible as b[r][c] for [r,c]  as args to Piece
-        set_piece(x, 2, Pawn.new(:white, [1, col]))
+        pawn = Pawn.new(:white, [1, col])
+        @white_list << pawn
+        set_piece(x, 2, pawn)
       end
       #enter royal pieces
-      set_piece("A", 1, Rook.new(:white, [0,0]))
-      set_piece("H", 1, Rook.new(:white, [0,7]))
-
-      set_piece("B", 1, Knight.new(:white, [0, 1]))
-      set_piece("G",1, Knight.new(:white, [0, 6]))
-
-      set_piece("C", 1, Bishop.new(:white, [0, 2]))
-      set_piece("F", 1, Bishop.new(:white, [0, 5]))
-
-      set_piece( "D", 1,Queen.new(:white, [0, 3]))
-      set_piece( "E", 1,King.new(:white, [0, 4]))
-      #end setup
+      rook = Rook.new(:white, [0,0])
+      @white_list << rook
+      set_piece("A", 1, rook)
+      rook = Rook.new(:white, [0,7])
+      set_piece("H", 1, rook)
+      @white_list << rook
+      
+      knight = Knight.new(:white, [0, 1])
+      @white_list << knight
+      set_piece("B", 1, knight)
+      knight = Knight.new(:white, [0, 6])
+      @white_list << knight
+      set_piece("G",1, knight)
+      
+      bishop = Bishop.new(:white, [0, 2])
+      @white_list << bishop
+      set_piece("C", 1, bishop)
+      bishop = Bishop.new(:white, [0, 5])
+      @white_list << bishop
+      set_piece("F", 1, bishop)
+      queen = Queen.new(:white, [0, 3])
+      @white_list << queen
+      set_piece( "D", 1,queen)
+      king = King.new(:white, [0,4])
+      @white_list << king
     end
+
     def fill_black
       ('A'..'H').each do |x|
         col = @@label_map[x] - 1
         #first position is the row index, then the column index. Position is raw row/column. accessible as b[r][c]
-        set_piece(x, 7, Pawn.new(:black, [6, col]))
+        pawn = Pawn.new(:black, [6, col])
+        @black_list << pawn
+        set_piece(x, 7, pawn)
       end
       #enter royal pieces
-      set_piece("A", 8, Rook.new(:black, [7,0]))
-      set_piece("H", 8, Rook.new(:black, [7,7]))
+      rook = Rook.new(:black, [7,0])
+      @black_list << rook
+      set_piece("A", 8, rook)
+      rook = Rook.new(:black, [7,7])
+      @black_list << rook
+      set_piece("H", 8, rook)
 
-      set_piece("B", 8, Knight.new(:black, [7, 1]))
-      set_piece("G",8, Knight.new(:black, [7, 6]))
-
-      set_piece("C", 8, Bishop.new(:black, [7, 2]))
-      set_piece("F", 8, Bishop.new(:black, [7, 5]))
-
-      set_piece( "D", 8,Queen.new(:black, [7, 3]))
-      set_piece( "E", 8,King.new(:black, [7, 4]))
+      knight = Knight.new(:black, [7, 1])
+      set_piece("B", 8, knight)
+      @black_list << knight
+      knight = Knight.new(:black, [7, 6])
+      set_piece("G",8, knight)
+      @black_list << knight
+      
+      bishop = Bishop.new(:black, [7, 2])
+      set_piece("C", 8, bishop)
+      @black_list << bishop
+      bishop = Bishop.new(:black, [7, 5])
+      set_piece("F", 8,bishop)
+      @black_list << bishop
+      queen = Queen.new(:black, [7,3])
+      set_piece( "D", 8, queen)
+      king = King.new(:black, [7,4])
+      set_piece( "E", 8, king)
+      @black_list << bishop
     end
 
 
@@ -286,14 +320,14 @@ module Chess
 
 
 
-    def actual_row(i) #i between 1 and 8, return as string
+    def actual_row(col) #i between 1 and 8, return as string
       s = "|"
       (1..8).each do |j|
-        x = piece_at(j,i)
+        x = piece_at(j,col)
         s << (x.nil? ?  " " : x.to_s) + " | "
       end
       s << "\n"
-      s = i.to_s.rjust(2, " ") + " " + s
+      s = col.to_s.rjust(2, " ") + " " + s
       return s #.slice((s.length/2)..-1)
     end
   

@@ -37,6 +37,10 @@ module Chess
     def location
       return @position.to_s
     end
+
+    def update_position(new_pos)
+      @position = new_pos
+    end
     
     def potential_moves; end
   end

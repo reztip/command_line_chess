@@ -31,6 +31,8 @@ module Chess
 	      end
         game_loop() #modifies program state
 	      @turn_num = @turn_num + 1
+        in_check = current_player_in_check?
+        notify_current_player if in_check
 	      game_is_over = checkmate?
       end
       winner = game_is_over
@@ -52,14 +54,18 @@ module Chess
      puts @game.to_s
      puts "It is #{current_player()}'s turn."
      move = receive_move()
-     puts move
-     is_valid = @game.is_valid?(move, @turn_num)
+     from = move.first
+     to = move.last
+     is_valid = @game.is_valid?(from, to, @turn_num)
      until is_valid
        move = receive_move()
-       is_valid = @game.is_valid?(move, @turn_num)
+       from = move.first
+       to = move.last
+       is_valid = @game.is_valid?(from, to, @turn_num)
      end
-     @game.make_move(move)
-     "It is #{current_player.to_s}'s turn."
+     puts "Moving from #{from} to #{to}."
+     @game.make_move(from, to)
+     nil
     end
 
     def setup
@@ -120,7 +126,7 @@ module Chess
      move = gets.chomp.upcase
      valid_selection = false
      until valid_selection
-       valid_selection = (('A'..'Z').include?(move[0]) && (1..8).include?(move[1].to_i))
+       valid_selection = (move ~= /[A-Ha-h][1-8]/)
        break if valid_selection
        print "Sorry, not a valid place on the board. Try something like A7. "
        move = gets.chomp
