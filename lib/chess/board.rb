@@ -8,9 +8,9 @@ require 'set'
 
 module Chess
   class Board
-    attr_reader :n, :row_labels, :column_labels
+    attr_reader :n, :row_labels, :column_labels, :black_list, :white_list
     @@n = 8
-    @@row_labels = ((1..@@n).to_a).map {|x| x.to_s}
+    @row_labels = ((1..@@n).to_a).map {|x| x.to_s}
     @@column_labels = ('A'..'H').to_a
     @@label_map = {'A' => 1, 'B' => 2, 'C' => 3, 'D'=> 4, 'E' => 5, 'F' => 6, 'G' => 7, 'H' => 8}
     def initialize
@@ -57,7 +57,7 @@ module Chess
       return is_valid( to, piece,color)
     end
 
-    private
+    
 
     def is_valid( to, piece, color)
       legal_moves = piece_moves(piece) #a list of positions of form [0, 6] which is the position's piece on the array
@@ -73,10 +73,25 @@ module Chess
       piece.update_location(destination) #let destination be of the form A5
     end
 
-    def move_piece(from_x, from_y, to_x, to_y) #from should be like [1,2], to should be like[3,2]
-      piece = piece_at(from_x, from_y)
-      @board[to_y - 1][to_x - 1] = piece
-      @board[from_y -1 ][from_x - 1] = nil
+    def move_piece(from, to) #from should be like [1,2], to should be like[3,2]
+      piece = piece_at(from[0], from[-1].to_i)
+      set_piece(to[0], to[-1].to_i, piece) 
+      remove_piece(from)
+      piece.update_position([from[1].to_i,x_coord(from[0])])
+    end
+   def remove_piece(from)
+   	row_num = from[1].to_i - 1
+	col_num = x_coord(from[0])
+	piece  = piece_at(from[0], from[1].to_i)
+	return nil if piece.nil?
+	@board[row_num][col_num] = nil
+	@white_list.delete(piece) if piece.color == :white
+	@black_list.delete(piece) if piece.color == :black
+	nil
+   end
+    private
+    def x_coord(character)
+      return character.ord - 65
     end
 
     def piece_moves(piece)
@@ -356,6 +371,9 @@ module Chess
       @type = type
       @position = position
       @representation = @@REP_MAP[@type][@color]
+    end
+    def update_position(new_pos)
+      @position = new_pos
     end
     def equal?(other)
      !other.nil? && other.color == @color && other.type == @type && other.position == @position
