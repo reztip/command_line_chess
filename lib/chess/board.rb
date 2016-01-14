@@ -69,15 +69,19 @@ module Chess
       return (color == :white) ? :black : :white
     end
 
-    def move_piece(destination, piece)
-      piece.update_location(destination) #let destination be of the form A5
-    end
 
-    def move_piece(from, to) #from should be like [1,2], to should be like[3,2]
+    def move_piece(from, to) #from should be like "A3", to should be like "B5"
       piece = piece_at(from[0], from[-1].to_i)
       set_piece(to[0], to[-1].to_i, piece) 
       remove_piece(from)
       piece.update_position([from[1].to_i,x_coord(from[0])])
+    end
+    def unmake_move(moved, deleted, source, dest, color)
+     enemies = color == :white ? @black_list : @white_list
+     enemies << deleted if !deleted.nil?
+     set_piece(source[0], source[1].to_i, moved)
+     set_piece(dest[0], dest[1].to_i, deleted) if !deleted.nil?
+     nil
     end
    def remove_piece(from)
    	row_num = from[1].to_i - 1

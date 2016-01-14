@@ -1,7 +1,6 @@
 require_relative './spec_helper.rb'
 module Chess
   describe Board do
-    describe "#piece_at" do
       before(:each) do
         @board = Board.new
       end
@@ -62,6 +61,7 @@ module Chess
 	end
       end
 
-  end
+  #TODO -all the hard stuff. Like checkng valid moves, checkmate, etc. 
+  _
 end
 end
