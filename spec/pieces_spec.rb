@@ -87,6 +87,44 @@ module Chess
 	  x = [[3, 0], [2,0], [2,1]]
 	  expect(pawn.potential_moves).to match_array(x)
 	end
+	it "works fine for a pawn on the east side" do
+	  pawn = Pawn.new(:black, [5,7])
+          x = [[4,6],[4,7]]	  
+	  expect(pawn.potential_moves).to match_array(x)
+	end
+	it "works ok for a pawn in the middle of the board" do
+	  pawn = Pawn.new(:white, [2,2])
+	  x = [[3,2], [3,1], [3,3]]
+	  expect(pawn.potential_moves).to match_array(x)
+	end
+     end
+     context Bishop do
+       it "gives full swath for the corner" do
+	bish = Bishop.new(:white, [0,0])
+	pos = []
+	(1..7).each {|i| pos << [i,i]}
+	expect(bish.potential_moves).to match_array(pos)
+       end
+       it "gives everything except on the diagonals" do
+ 	bish = Bishop.new(:black, [1,1])
+	pos = []
+	(0..7).each {|i| pos << [i,i] if i != 1}
+	pos << [0,2]
+	pos << [2,0]
+	expect(bish.potential_moves).to match_array(pos)
+       end
+     end
+     context King do
+	it "gives the right result for black starting position" do
+	  king = King.new(:black, [7,4])
+	  x = [[7,3], [7,5], [6,3], [6,4], [6,5]]
+	  expect(king.potential_moves).to match_array(x)
+	end
+	it "gives the right result for white in the middle of the board" do 
+	  king = King.new(:white, [4,4])
+	  x = [[3,3], [5,5], [3,5],[5,3], [5,4], [3,4], [4,5], [4,3]]
+	  expect(king.potential_moves).to match_array(x)
+        end
      end
    end
   end
