@@ -93,6 +93,11 @@ module Chess
 	@black_list.delete(piece) if piece.color == :black
 	nil
    end
+    def reorder_enemy_pieces_around(piece)
+	enemy_list = piece.color == :white ? @black_list : @white_list
+	enemy_list.sort_by! {|p| piece.dist_from(p) }
+
+    end
     private
     def x_coord(character)
       return character.ord - 65
@@ -391,7 +396,9 @@ module Chess
      !other.nil? && other.color == @color && other.type == @type && other.position == @position
     end
 
-
+    def dist_from(other)
+      return (@position.first - other.first).abs + (@position.last - other.last).abs
+    end
 
     def to_s
       return @representation

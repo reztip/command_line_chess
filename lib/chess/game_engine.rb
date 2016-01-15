@@ -10,7 +10,7 @@ module Chess
      @board = Board.new
    end
 
-   def valid_moves(position) # position should be
+   def valid_moves(position) # position should be in form A5
      position_x = position[0].upcase
      position_y = position[-1].to_i
      piece = @board.piece_at(position_x, position_y)
@@ -57,10 +57,11 @@ module Chess
      enemy_piece_list = color == :white ? @board.black_list : @board.white_list
      friendly_piece_list = color == :white ? @board.white_list : @board.black_list
      king = friendly_piece_list.find {|piece| piece.is_a? King} 
+     @board.reorder_enemy_pieces_around(king)
      enemy_piece_list.each do |piece| 
         loc = pretty_location_representation(piece.position)
 	v_moves = valid_moves(loc)
-	return true if !v_moves.nil? && v_moves.include? king.position
+	return true if !v_moves.nil? && v_moves.include?(king.position)
      end
      return false
    end

@@ -62,6 +62,11 @@ module Chess
       end
 
   #TODO -all the hard stuff. Like checkng valid moves, checkmate, etc. 
-  _
+      context '#valid_moves' do
+        let(:board) {Board.new}
+	it "says a pawn on a starting board only has two valid moves" do
+	 expect(@board.valid_moves("A2")).to include [2,0[],[3,0]]
+	end
+      end
 end
 end
