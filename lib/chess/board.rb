@@ -381,31 +381,29 @@ module Chess
       @position = position
       @representation = @@REP_MAP[@type][@color]
     end
-    def update_position(new_pos)
-      @position = new_pos
-    end
     def equal?(other)
      !other.nil? && other.color == @color && other.type == @type && other.position == @position
     end
-
     def ==(other)
      !other.nil? && other.color == @color && other.type == @type && other.position == @position
-    end
-
-    def ===(other)
+     end
+    def eql?(other)
      !other.nil? && other.color == @color && other.type == @type && other.position == @position
     end
-
-    def dist_from(other)
-      return (@position.first - other.first).abs + (@position.last - other.last).abs
-    end
-
     def to_s
       return @representation
     end
-
+    
+    def dist_from(other)
+      #puts "other position: #{other.position} & self: #{@position}"
+     return (@position[0] - other.position[0]).abs + (@position[1] - other.position[1]).abs
+    end
     def location
       return @position.to_s
+    end
+
+    def update_position(new_pos)
+      @position = new_pos
     end
     
     def potential_moves; end
@@ -433,6 +431,7 @@ module Chess
        (pos_y...8).each do |y|
          positions << [pos_x, y]
        end
+       positions.delete([pos_x, pos_y])
        return positions
     end
   end
@@ -444,45 +443,36 @@ module Chess
 
     #this needs to be heavily filtered, since pawns can move diagonally only if 
     def potential_moves
-      pos_x = @position.first
-      pos_y = @position.last
-      positions = []
-      if color == :white && pos_y == 1
-        positions << [pos_x, pos_y + 2]
-        if (pos_x == 0 && pos_y < 7)
-          positions << [pos_x, pos_y + 1]
-          positions << [pos_x + 1, pos_y + 1]
-        
-        elsif (pos_x == 7 && pos_y < 7)
-          positions << [pos_x, pos_y + 1]
-          positions << [pos_x - 1, pos_y + 1]
-
-        elsif pos_y < 7
-           positions << [pos_x, pos_y + 1]
-           positions << [pos_x - 1, pos_y + 1]
-            positions << [pos_x + 1, pos_y + 1]
-        end
+      row = @position.first
+      col = @position.last
+      pos = []
+      if @color == :white
+        if row == 1
+	  pos << [row+2, col]
+	end
+	if row < 7
+	  pos << [row + 1, col]
+	end
+	if col > 0 && row < 7
+	  pos << [row + 1, col - 1]
+	end
+	if col < 7 && row < 7
+	  pos << [row + 1, col + 1]
+	end
       else
-        if pos_y == 6
-          positions << [pos_x, pos_y - 2]
-        end
-        if (pos_x == 0 && pos_y > 0)
-          positions << [pos_x, pos_y - 1]
-          positions << [pos_x + 1, pos_y - 1]
-        
-        elsif (pos_x == 7 && pos_y > 0)
-          posi
-    endtions << [pos_x, pos_y - 1]
-          positions << [pos_x - 1, pos_y - 1]
-
-        elsif pos_y > 0
-           positions << [pos_x, pos_y - 1]
-           positions << [pos_x - 1, pos_y - 1]
-            positions << [pos_x + 1, pos_y - 1]
-        end
-
+	if row == 6
+	  pos << [row - 2, col]
+	end
+	if row > 0
+	  pos << [row -1, col] 
+	  if col > 0
+	    pos << [row - 1, col - 1]
+	  elsif col < 7
+	    pos << [row -1, col + 1]
+	  end
+	end
       end
-      return position
+      return pos
     end
   end
 
@@ -494,9 +484,8 @@ module Chess
       pos_x = @position.first
       pos_y = @position.last
       px = [ [pos_x + 1, pos_y + 2],[pos_x + 1, pos_y - 2],[pos_x + 2, pos_y + 1], [pos_x + 2, pos_y - 1],[pos_x - 1, pos_y + 2],[pos_x - 1, pos_y - 2],[pos_x - 2, pos_y + 1],[pos_x - 2, pos_y - 1]]
-      # puts px
-       px.select! {|pos| pos.first.between?(0,7) && pos.last.between?(0,7)}
-       return px
+      #puts px
+      return px.select {|pos| pos.first.between?(0,7) && pos.last.between?(0,7)}
     end
   end
 
@@ -506,34 +495,26 @@ module Chess
     end
 
     def potential_moves
-      pos_x = @position.first
-      pos_y = @position.last
-      # puts pos_x
-      # puts pos_y
-      i = 1
-      j = 1
-      positions = []
-      until (pos_x + i >7 || pos_y + j > 7)
-        positions << [pos_x + i, pos_y + j]
-        i = i+1; j = j+ 1
+      row = @position.first
+      col  = @position.last
+      pos = []
+      (1..8).each do |r|
+        break if (row + r > 7 || col + r > 7)
+	pos << [row + r, col + r]
       end
-      i = -1; j = -1
-      until (pos_y + j < 0  || pos_x + i < 0)
-        positions << [pos_x + i, pos_y + j]
-        i = i - 1; j = j - 1
+      (1..8).each do |r|
+        break if (row + r > 7 || col - r < 0)
+	pos << [row + r, col - r]
       end
-      i = 1; j = -1
-      until (pos_y + j < 0  || pos_x + i > 7)
-        positions << [pos_x + i, pos_y + j]
-        i = i + 1; j = j - 1
+      (1..8).each do |r|
+        break if (row - r < 0 || col + r > 7)
+	pos << [row - r, col + r]
       end
-      i = -1, j = 1
-      until (pos_y + j > 7  || pos_x + i < 0)
-        positions << [pos_x + i, pos_y + j]
-        i = i - 1; j = j + 1
+      (1..8).each do |r|
+        break if (row - r < 0 || col - r < 0)
+	pos << [row - r, col - r]
       end
-
-      return position
+      return pos 
     end
   end
   class Queen < Pieces
@@ -541,42 +522,39 @@ module Chess
       super(:queen, color, position)
     end
     def potential_moves
-      pos_x = @position.first
-      pos_y = @position.last
-      i = 1
-      j = 1
-      positions = []
-      until (pos_x + i >7 || pos_y + j > 7)
-        positions << [pos_x + i, pos_y + j]
-        i = i+1; j = j+ 1
+      row = @position.first
+      col  = @position.last
+      pos = []
+      (1..8).each do |r|
+        break if (row + r > 7 || col + r > 7)
+	pos << [row + r, col + r]
       end
-      i = -1; j = -1
-      until (pos_y + j < 0  || pos_x + i < 0)
-        positions << [pos_x + i, pos_y + j]
-        i = i - 1; j = j - 1
+      (1..8).each do |r|
+        break if (row + r > 7 || col - r < 0)
+	pos << [row + r, col - r]
       end
-      i = 1; j = -1
-      until (pos_y + j < 0  || pos_x + i > 7)
-        positions << [pos_x + i, pos_y + j]
-        i = i + 1; j = j - 1
+      (1..8).each do |r|
+        break if (row - r < 0 || col + r > 7)
+	pos << [row - r, col + r]
       end
-      i = -1, j = 1
-      until (pos_y + j > 7  || pos_x + i < 0)
-        positions << [pos_x + i, pos_y + j]
-        i = i - 1; j = j + 1
+      (1..8).each do |r|
+        break if (row - r < 0 || col - r < 0)
+	pos << [row - r, col - r]
       end
-      (0...pos_x).each do |x|
-         positions << [x, pos_y]
+       positions = pos 
+       (0...row).each do |x|
+         positions << [x, col]
          end
-      (pos_x...8).each do |x|
-         positions << [x, pos_y]
+      (row...8).each do |x|
+         positions << [x, col]
        end
-       (0...pos_y).each do |y|
-         positions << [pos_x, y]
+       (0...col).each do |y|
+         positions << [row, y]
        end
-       (pos_y...8).each do |y|
-         positions << [pos_x, y]
+       (col...8).each do |y|
+         positions << [row, y]
        end
+       positions.delete([row, col])
        return positions
     end
   end
@@ -587,8 +565,8 @@ module Chess
     end
     def potential_moves
       pos_x = @position.first
-      pos_y = @position.y
-      [ [pos_x, pos_y + 1],
+      pos_y = @position.last
+      x = [ [pos_x, pos_y + 1],
         [pos_x, pos_y - 1],
         [pos_x + 1, pos_y + 1],
         [pos_x + 1, pos_y - 1],
@@ -596,7 +574,9 @@ module Chess
         [pos_x - 1, pos_y - 1],
         [pos_x + 1, pos_y],
         [pos_x - 1, pos_y]
-      ].select {|pos| pos.first.between?(0,7) && pos.last.between?(0,7)}
+      ]
+      x.select! {|pos| pos.first.between?(0,7) && pos.last.between?(0,7)}
+      return x
     end
   end
 end
