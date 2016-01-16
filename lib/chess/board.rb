@@ -98,14 +98,14 @@ module Chess
 	enemy_list.sort_by! {|p| piece.dist_from(p) }
 
     end
-    private
     def x_coord(character)
       return character.ord - 65
     end
 
     def piece_moves(piece)
+      return nil if piece.nil? || !piece.is_a?(Pieces)
       potential_moves = piece.potential_moves #a list of positions of form [0, 6] which is the position's piece on the array
-      p potential_moves
+      #p potential_moves
       return nil if potential_moves.nil? || potential_moves.empty?
       potential_moves.select! {|pos| piece_at(pos.first + 1, pos.last + 1) == nil || piece_at(pos.first + 1, pos.last + 1).color == other_color(piece.color)  }
       actual_moves = actual_possible_moves(piece, potential_moves)
@@ -113,6 +113,7 @@ module Chess
     end
 
     def actual_possible_moves(piece, potential_moves)
+
       p_type = piece.type
       case p_type
 
@@ -131,22 +132,28 @@ module Chess
       end
     end
 
+    private
     def pawn_moves(piece, potential_moves)
-      location = piece.position
-      x = location.first
       color = piece.color
-      othercolor = other_color(color)
       pm = Array.new(potential_moves)
-      pm.each do |new_loc|
-        new_x = new_loc.first + 1
-        new_y = new_loc.last + 1
-        other_piece = piece_at(new_x, new_y)
-        potential_moves.delete(new_loc) if !other_piece.nil? && other_piece.location.first == x #pawn is blocked by stuff in front of it
-        potential_moves.delete(new_loc) if (other_piece.nil? || color == other_color) && other_piece.location.first != x #pawn is blocked by stuff in front of it
+      pm.each do |mov|
+       x = (mov.last + 65).chr 
+       y = mov.first + 1
+       other_piece = piece_at(x,y)
+       #pawn cannot move diagonally if diagonal position is empty
+       potential_moves.delete(mov) if other_piece.nil? && mov.last != piece.position.last
+       next if other_piece.nil?
+       #pawn cannot move to a position if it is occupied by a team member
+       potential_moves.delete( mov) if other_piece.color == color      
+       #pawn cannot move to position if there is a different color in front of it 
+       potential_moves.delete(mov) if other_piece.color != color && mov.last == piece.position.last
+       #pawn cannot move up two spaces if there is a piece blocking it
+       if piece.dist_from(other_piece) == 2
+        potential_moves.delete(mov) if piece.color == :white && !piece_at(x, y-1).nil?
+        potential_moves.delete(mov) if piece.color == :black && !piece_at(x, y+1).nil?
+       end
       end
-      potential_moves.delete_if {|pos| !potential_moves.include?([pos.first, pos.last - 1]) } if color == :white #need to filter out the starting 2x move if something is in the way
-      potential_moves.delete_if {|pos| !potential_moves.include?([pos.first, pos.last + 1]) } if color == :black
-      return potential_moves
+      return potential_moves 
     end
 
     def bishop_moves(piece, moves)
