@@ -165,58 +165,84 @@ module Chess
     end
 
     def bishop_moves(piece, moves)
-      loc = piece.location
-      x = loc.first
-      y = first.last
-      i = x + 1
-      j = y + 1
-      blocked_count = 0
-      until (i > 7 || j > 7)
-        other_piece = piece_at(i+1, j+1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        i = i + 1
-        j = j + 1
-      end
-      i = x + 1 ; j = y - 1; blocked_count = 0
-      until (i > 7 || j < 0)
-        other_piece = piece_at(i+1, j+1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        i = i + 1
-        j = j - 1
-      end
-       i = x -1 ; j = y + 1; blocked_count = 0
-      until (i < 0 || j > 7)
-        other_piece = piece_at(i+1, j+1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        i = i - 1
-        j = j + 1
-      end
-       i = x -1 ; j = y - 1; blocked_count = 0
-      until (i < 0 || j < 0)
-        other_piece = piece_at(i+1, j+1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        i = i - 1
-        j = j - 1
-      end
-      return moves
+      filter_diag_up_right(piece, moves) 
+      filter_diag_down_right(piece, moves) 
+      filter_diag_up_left(piece, moves) 
+      filter_diag_down_left(piece, moves) 
     end
-
+    def filter_diag_up_right(piece,moves)
+     row = piece.position.first
+     col = piece.position.last
+     blocked = false
+     hit_count = 0
+     pos_count = 0
+     i = 0
+     while (row + i <= 7 && col + i <= 7)
+       moves.delete([row + i, col + i]) if blocked || hit_count > 1 || pos_count > 1
+       cond = row + i + 1 < 7 && col + i + 1 < 7
+       neighbor = piece_at(*nice_string([row + i + 1, col + i + 1])) if cond
+       blocked ||= !neighbor.nil? && neighbor.color == piece.color
+       hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+       pos_count = pos_count + 1 if hit_count > 0
+       i = i + 1
+     end
+     return moves
+    end
+    def filter_diag_down_right(piece,moves)
+     row = piece.position.first
+     col = piece.position.last
+     blocked = false
+     hit_count = 0
+     pos_count = 0
+     i = 0
+     while (row - i >= 0 && col + i <= 7)
+       moves.delete([row - i, col + i]) if blocked || hit_count > 1 || pos_count > 1
+       cond = row - i -  1 > 0 && col + i + 1 < 7
+       neighbor = piece_at(*nice_string([row - i - 1, col + i + 1])) if cond
+       blocked ||= !neighbor.nil? && neighbor.color == piece.color
+       hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+       pos_count = pos_count + 1 if hit_count > 0
+       i = i + 1
+     end
+     return moves
+    end
+    def filter_diag_down_left(piece,moves)
+     row = piece.position.first
+     col = piece.position.last
+     blocked = false
+     hit_count = 0
+     pos_count = 0
+     i = 0
+     while (row - i >= 0 && col - i >= 0)
+       moves.delete([row - i, col - i]) if blocked || hit_count > 1 || pos_count > 1
+       cond = row - i -  1 > 0 && col - i - 1 > 0
+       neighbor = piece_at(*nice_string([row - i - 1, col - i - 1])) if cond
+       blocked ||= !neighbor.nil? && neighbor.color == piece.color
+       hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+       pos_count = pos_count + 1 if hit_count > 0
+       i = i + 1
+     end
+     return moves
+    end
+    def filter_diag_up_left(piece,moves)
+     row = piece.position.first
+     col = piece.position.last
+     blocked = false
+     hit_count = 0
+     pos_count = 0
+     i = 0
+     while (row + i <= 7 && col - i >= 0)
+       moves.delete([row + i, col - i]) if blocked || hit_count > 1 || pos_count > 1
+       cond = row + i + 1 < 7 && col -i -1 > 0
+       neighbor = piece_at(*nice_string([row + i + 1, col - i - 1])) if cond
+       blocked ||= !neighbor.nil? && neighbor.color == piece.color
+       hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+       pos_count = pos_count + 1 if hit_count > 0
+       i = i + 1
+     end
+     return moves
+    end
     def rook_moves(piece, moves)
-      pos = piece.position
-      row = pos.first
-      col = pos.last
       filter_right_pieces(piece,moves)
       filter_left_pieces(piece,moves)
       filter_above_pieces(piece,moves)

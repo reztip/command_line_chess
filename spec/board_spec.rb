@@ -180,7 +180,39 @@ module Chess
       end
     end
     context Bishop do
-      
+     it "bishop cannot budge initially" do
+      black = @board.piece_at("F", 8)
+      white = @board.piece_at("F", 1)
+      expect(@board.piece_moves(white)).to match_array []
+      expect(@board.piece_moves(black)).to match_array []
+     end
+     it "has its pawns in its way moved" do
+       @board.set_piece("E",2, nil)
+       @board.set_piece("G",2, nil)
+       pos =  [[2,7], [1,6]]
+       (1..5).each {|i| pos << [0+ i, 5 -i]}
+       bish = @board.piece_at("F", 1)
+       expect(@board.piece_moves(bish)).to match_array pos
+     end
+     it "has its pawns in its way moved and one enemy pawn in B5" do
+       @board.set_piece("E",2, nil)
+       @board.set_piece("G",2, nil)
+       @board.set_piece("B",5, Pawn.new(:black, [6,1]))
+       pos =  [[2,7], [1,6]]
+       (1..4).each {|i| pos << [0+ i, 5 -i]}
+       bish = @board.piece_at("F", 1)
+       expect(@board.piece_moves(bish)).to match_array pos
+     end
+     it "is surrounded by enemyies everywhere" do
+       bish = Bishop.new(:white, [3, 2])
+       @board.set_piece("C", 4, bish)
+       @board.set_piece("D",3, Pawn.new(:black, [2,3]))
+       @board.set_piece("D",5, Pawn.new(:black, [4, 3]))
+       @board.set_piece("B",3, Pawn.new(:black, [2, 1]))
+       @board.set_piece("B",5,Pawn.new(:black,[4,1]))
+       pos = [[2,3], [4,3], [2,1], [4,1]]
+       expect(@board.piece_moves(bish)).to match_array pos
+     end
     end
    end
   end
