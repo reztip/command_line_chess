@@ -22,7 +22,7 @@ module Chess
     end
 
     def play
-      game_is_over = checkmate?
+      game_is_over = checkmate?(@turn_num)
       until game_is_over
         print "Would you like to save the game? (Y/N) "
       	save = gets.chomp
@@ -78,8 +78,8 @@ module Chess
       return [p1, p2]
     end
 
-    def checkmate? #say :white or :black
-      @game.checkmate?
+    def checkmate?(turn) #say :white or :black
+      @game.checkmate?(turn)
     end
 
 

@@ -15,9 +15,8 @@ module Chess
      position_y = position[-1].to_i
      piece = @board.piece_at(position_x, position_y)
      return nil if piece.nil? #quick optimization, also prevents runtime errors
-     potential_moves = piece.potential_moves
-     legal_moves = @board.legal_moves(piece, potential_moves)
-     if !legal_moves
+     legal_moves = @board.piece_moves(piece)
+     if !legal_moves || legal_moves == []
       return nil
      else
       return legal_moves
@@ -28,7 +27,8 @@ module Chess
     @board.to_s
    end
 
-   def pretty_location_representation(x,y)
+   def pretty_location_representation(pos)
+     x,y = *pos
      a = (y +  1).to_s #y is the row number
      b = (x + 65).chr
      return b+a
@@ -41,7 +41,7 @@ module Chess
      friendly_piece_list.each do |piece|
        pos = piece.position
        loc = pretty_location_representation(pos)
-       v_moves = valid_moves(loc)
+       v_moves = @board.piece_moves(piece) 
        v_moves.each do |move|
         dest = pretty_location_representation(move) 
 	@board.move_piece(loc, dest)
@@ -65,8 +65,8 @@ module Chess
      end
      return false
    end
-   def is_valid?(move, turn_number) #currently a stub
-    @board.is_valid?(move, turn_number)
+   def is_valid?(from, to, turn_number) #currently a stub
+    @board.is_valid?(from, to, turn_number)
    end
 
    def piece_at(pos) #pos should be a string like "A1" or array like ["A", 3]

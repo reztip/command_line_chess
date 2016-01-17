@@ -43,14 +43,10 @@ module Chess
       return s
     end
 
-    def checkmate? #TODO STUB
-    end
 
-    def is_valid?(mv, turnnum)
-      from = mv.first
-      to = mv.last
+    def is_valid?(from, to, turnnum)
       player_color = ( turnnum.even? ? :white : :black)
-      piece  = piece_at(from.first + 1, from.last + 1)
+      piece  = piece_at(from[0], from[1].to_i)
       return false if piece.nil?
       color = piece.color
       return false if player_color != color
