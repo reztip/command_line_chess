@@ -157,6 +157,30 @@ module Chess
        end
      expect(@board.piece_moves(rook)).to match_array pos
      end
+     it "is blocked on one side" do
+      @board.set_piece("A", 1, Rook.new(:white, [0,0]))
+      rook = @board.piece_at("A",1)
+      @board.set_piece("A", 2, nil)
+      pos = []
+      (1..6).each {|i| pos << [i,0]}
+      expect(@board.piece_moves(rook)).to match_array pos
+     end
+    end
+    context Knight do
+      it "is in an initial place" do
+        knight = @board.piece_at("G",8) #[7,6]
+        expected_moves = [[5,7],[5,5]]
+        expect(@board.piece_moves(knight)).to match_array expected_moves
+      end
+      it "can hit six moves in column 3" do
+        @board.set_piece("C",3, Knight.new(:black, [4,4]))
+        knight = @board.piece_at("C",3)
+        expected_moves = [[5,6],[5,2],[3,6],[3,2],[2,5], [2,3]]
+        expect(@board.piece_moves(knight)).to match_array expected_moves
+      end
+    end
+    context Bishop do
+      
     end
    end
   end
