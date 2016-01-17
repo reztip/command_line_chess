@@ -33,6 +33,7 @@ module Chess
    def checkmate?(turn_num) #exhaustive search of team's possible moves, quite expensive... 
      #means that the current plyaer (even == white) is in check
      return true if king_is_dead?(turn_num)
+     return false unless in_check?(turn_num)
      color = turn_num.even? ? :white : :black
      friendly_piece_list = color == :white ? @board.white_list : @board.black_list
      friendly_piece_list.each do |piece|
@@ -41,6 +42,7 @@ module Chess
        v_moves = @board.piece_moves(piece) 
        v_moves.each do |move|
         dest = pretty_location_representation(move) 
+        old_piece = piece_at(dest)
 	      @board.move_piece(loc, dest)
 	      return false if !in_check?(turn_num)
 	      @board.unmake_move(piece, old_piece, loc, dest, color)
@@ -76,12 +78,12 @@ module Chess
       color = (num.even? ? :white : :black)
       if color == :white
         @board.white_list.each do |p|
-          return false if p.is_a?(King)
+          return false if p.type == :king
         end
         return true
       else
         @board.black_list.each do |p|
-          return false if p.is_a?(King)
+          return false if p.type == :king
         end
         return true
       end
