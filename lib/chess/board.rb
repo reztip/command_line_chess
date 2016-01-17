@@ -66,27 +66,28 @@ module Chess
 
     def move_piece(from, to) #from should be like "A3", to should be like "B5"
       piece = piece_at(from[0], from[-1].to_i)
+      replaced_piece = piece_at(to[0], to[1].to_i)
+      remove_piece(to, replaced_piece) unless replaced_piece.nil?
       set_piece(to[0], to[-1].to_i, piece) 
-      remove_piece(from)
+      set_piece(from[0], from[1].to_i, nil)
       piece.update_position([to[1].to_i - 1 , to[0].ord - 65])
       return nil
     end
     def unmake_move(moved, deleted, source, dest, color)
      enemies = color == :white ? @black_list : @white_list
-     enemies << deleted if !deleted.nil?
-     set_piece(source[0], source[1].to_i, moved)
+     move_piece(dest,source)
      set_piece(dest[0], dest[1].to_i, deleted) if !deleted.nil?
+     enemies << deleted if !deleted.nil? && deleted.color == color && !enemies.include?(deleted)
      nil
     end
-   def remove_piece(from)
-   	row_num = from[1].to_i - 1
-	col_num = x_coord(from[0])
-	piece  = piece_at(from[0], from[1].to_i)
-	return nil if piece.nil?
-	@board[row_num][col_num] = nil
-	@white_list.delete(piece) if piece.color == :white
-	@black_list.delete(piece) if piece.color == :black
-	nil
+   def remove_piece(to, piece)
+   	row_num = to[1].to_i - 1
+  	col_num = x_coord(to[0])
+  	@board[row_num][col_num] = nil
+  	return nil if piece.nil?
+	  @white_list.delete(piece) if piece.color == :white
+  	@black_list.delete(piece) if piece.color == :black
+  	nil
    end
     def reorder_enemy_pieces_around(piece)
 	    enemy_list = piece.color == :white ? @black_list : @white_list
@@ -113,16 +114,12 @@ module Chess
     end
 
     def actual_possible_moves(piece, potential_moves)
-
       p_type = piece.type
       case p_type
-
       when :king, :knight #unrestricted mvoement except for same-color pieces
         return potential_moves
-
       when :pawn
         return pawn_moves(piece, potential_moves)
-
       when :bishop
         return bishop_moves(piece, potential_moves)
       when :rook
@@ -151,7 +148,6 @@ module Chess
       if color == :white && piece.position.first == 1
         potential_moves.delete([piece.position.first + 2, piece.position.last]) if !piece_at(*nice_string([piece.position.first + 1, piece.position.last])).nil? 
       end
-
       if color == :black && piece.position.first == 6
         potential_moves.delete([piece.position.first - 2, piece.position.last]) if !piece_at(*nice_string([piece.position.first - 1, piece.position.last])).nil? 
       end
@@ -429,7 +425,6 @@ module Chess
     end
   
   end
-
   class Pieces
     attr_reader :representation, :color, :position, :type
     @@types = [:pawn, :rook, :knight, :bishop, :queen, :king]

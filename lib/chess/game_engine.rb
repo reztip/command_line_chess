@@ -6,6 +6,7 @@ require_relative "./board_characters.rb"
 require_relative "./game_engine.rb"  
 module Chess
  class GameEngine
+   attr_reader :board
    def initialize
      @board = Board.new
    end
@@ -59,9 +60,11 @@ module Chess
      friendly_piece_list = color == :white ? @board.white_list : @board.black_list
      king = friendly_piece_list.find {|piece| piece.type == :king} 
      @board.reorder_enemy_pieces_around(king)
+     p enemy_piece_list.map {|pc| "#{pc.color} #{pc.type}: #{pc.location}"}
      enemy_piece_list.each do |piece| 
         loc = pretty_location_representation(piece.position)
 	      v_moves = valid_moves(loc)
+        #p "#{piece.color.to_s} #{piece.to_s} at #{piece.position}: #{v_moves}" unless v_moves.nil?
 	      return true if !v_moves.nil? && v_moves.include?(king.position)
      end
      return false

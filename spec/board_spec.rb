@@ -215,9 +215,6 @@ module Chess
      end
     end
 
-    context Queen do
-
-    end
    end
   end
 end
