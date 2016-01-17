@@ -50,16 +50,14 @@ module Chess
       return false if piece.nil?
       color = piece.color
       return false if player_color != color
-      return is_valid( to, piece,color)
+      legal_moves = piece_moves(piece)
+      to_move = string_to_array(to)
+      return !legal_moves.nil? && legal_moves.include?(to_move)
     end
 
-    
-
-    def is_valid( to, piece, color)
-      legal_moves = piece_moves(piece) #a list of positions of form [0, 6] which is the position's piece on the array
-      return false if legal_moves.nil? || legal_moves.empty?
-      return legal_moves.include?(to)
-    end
+   def string_to_array(pos)
+    return [pos[1].to_i - 1, pos[0].ord - 65]
+   end
 
     def other_color(color)
       return (color == :white) ? :black : :white

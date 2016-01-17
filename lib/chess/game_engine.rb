@@ -72,6 +72,9 @@ module Chess
    def piece_at(pos) #pos should be a string like "A1" or array like ["A", 3]
     @board.piece_at(pos[0], pos[1].to_i)
    end
+   def make_move(from,to)
+    @board.move_piece(from,to)
+   end
 
  end
 

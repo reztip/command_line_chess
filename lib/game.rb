@@ -22,21 +22,21 @@ module Chess
     end
 
     def play
-      game_is_over = checkmate?(@turn_num)
+      game_is_over = false 
       until game_is_over
         print "Would you like to save the game? (Y/N) "
       	save = gets.chomp
 	      if /[Yy]([Ee][Ss])?/ =~  save
           save_game()
 	      end
-        game_loop() #modifies program state
-	      @turn_num = @turn_num + 1
         in_check = current_player_in_check?
         notify_current_player if in_check
-	      game_is_over = checkmate?
+	      game_is_over ||= checkmate?(@turn_num) if in_check
+        break if game_is_over
+        game_loop() #modifies program state and makes player move his/her piece
+	      @turn_num = @turn_num + 1
       end
-      winner = game_is_over
-      return winner
+      puts ("#{ current_player()} has been defeated!")
     end
 
     private
@@ -54,14 +54,17 @@ module Chess
      puts @game.to_s
      puts "It is #{current_player()}'s turn."
      move = receive_move()
-     from = move.first
-     to = move.last
-     is_valid = @game.is_valid?(from, to, @turn_num)
+     from = move.first #something like A2
+     to = move.last #something like B3
+     is_valid = @game.is_valid?(from, to, @turn_num) #can the current player move  a piece from->to?
      until is_valid
        move = receive_move()
        from = move.first
        to = move.last
+       piece = @game.piece_at(from) #what is the current piece?
+       puts "You have selected a #{piece.type.to_s.upcase} at #{from}."
        is_valid = @game.is_valid?(from, to, @turn_num)
+       puts "Sorry. not a legal move. please choose again." unless is_valid
      end
      puts "Moving from #{from} to #{to}."
      @game.make_move(from, to)
@@ -85,6 +88,12 @@ module Chess
 
     def current_player
       turn_num.even? ? @white_player : @black_player
+    end
+    def current_player_in_check?
+      return @game.in_check?(@turn_num)
+    end
+    def notify_current_player
+      puts "#{current_player()} is now in check!"
     end
 
     def save_game
@@ -121,7 +130,7 @@ module Chess
       end
    end
     #receive move should return something like ['A2', 'B3']
-    def receive_move #a request to move a piece from something to somewhere else
+    def receive_move() #a request to move a piece from something to somewhere else
      print "Where is the piece you want to move (e.g., B2)? "
      move = gets.chomp.upcase
      valid_selection = false
