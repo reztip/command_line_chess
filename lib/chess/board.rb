@@ -89,9 +89,9 @@ module Chess
 	nil
    end
     def reorder_enemy_pieces_around(piece)
-	enemy_list = piece.color == :white ? @black_list : @white_list
-	enemy_list.sort_by! {|p| piece.dist_from(p) }
-
+	    enemy_list = piece.color == :white ? @black_list : @white_list
+      #p enemy_list
+	    enemy_list.sort_by! {|p| piece.dist_from(p) }
     end
     def x_coord(character)
       return character.ord - 65
@@ -404,9 +404,10 @@ module Chess
       @black_list << bishop
       queen = Queen.new(:black, [7,3])
       set_piece( "D", 8, queen)
+      @black_list << queen
       king = King.new(:black, [7,4])
       set_piece( "E", 8, king)
-      @black_list << bishop
+      @black_list << king
     end
 
 

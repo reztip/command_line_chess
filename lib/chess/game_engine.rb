@@ -36,6 +36,7 @@ module Chess
 
    def checkmate?(turn_num) #exhaustive search of team's possible moves, quite expensive... 
      #means that the current plyaer (even == white) is in check
+     return true if king_is_dead?(turn_num)
      color = turn_num.even? ? :white : :black
      friendly_piece_list = color == :white ? @board.white_list : @board.black_list
      friendly_piece_list.each do |piece|
@@ -44,9 +45,9 @@ module Chess
        v_moves = @board.piece_moves(piece) 
        v_moves.each do |move|
         dest = pretty_location_representation(move) 
-	@board.move_piece(loc, dest)
-	return false if !in_check?(turn_num)
-	@board.unmake_move(piece, old_piece, loc, dest, color)
+	      @board.move_piece(loc, dest)
+	      return false if !in_check?(turn_num)
+	      @board.unmake_move(piece, old_piece, loc, dest, color)
        end
      end
      return true
@@ -56,12 +57,12 @@ module Chess
      color = turn_num.even? ? :white : :black
      enemy_piece_list = color == :white ? @board.black_list : @board.white_list
      friendly_piece_list = color == :white ? @board.white_list : @board.black_list
-     king = friendly_piece_list.find {|piece| piece.is_a? King} 
+     king = friendly_piece_list.find {|piece| piece.type == :king} 
      @board.reorder_enemy_pieces_around(king)
      enemy_piece_list.each do |piece| 
         loc = pretty_location_representation(piece.position)
-	v_moves = valid_moves(loc)
-	return true if !v_moves.nil? && v_moves.include?(king.position)
+	      v_moves = valid_moves(loc)
+	      return true if !v_moves.nil? && v_moves.include?(king.position)
      end
      return false
    end
@@ -75,6 +76,20 @@ module Chess
    def make_move(from,to)
     @board.move_piece(from,to)
    end
+    def king_is_dead?(num)
+      color = (num.even? ? :white : :black)
+      if color == :white
+        @board.white_list.each do |p|
+          return false if p.is_a?(King)
+        end
+        return true
+      else
+        @board.black_list.each do |p|
+          return false if p.is_a?(King)
+        end
+        return true
+      end
+    end
 
  end
 

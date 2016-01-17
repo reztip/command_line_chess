@@ -62,12 +62,13 @@ module Chess
        from = move.first
        to = move.last
        piece = @game.piece_at(from) #what is the current piece?
-       puts "You have selected a #{piece.type.to_s.upcase} at #{from}."
+       puts "You have selected a #{piece.type.to_s.upcase} at #{from} to move to #{to}."
        is_valid = @game.is_valid?(from, to, @turn_num)
        puts "Sorry. not a legal move. please choose again." unless is_valid
      end
      puts "Moving from #{from} to #{to}."
      @game.make_move(from, to)
+     puts @game.to_s
      nil
     end
 
@@ -132,25 +133,25 @@ module Chess
     #receive move should return something like ['A2', 'B3']
     def receive_move() #a request to move a piece from something to somewhere else
      print "Where is the piece you want to move (e.g., B2)? "
-     move = gets.chomp.upcase
+     from = gets.chomp.upcase
      valid_selection = false
      until valid_selection
-       valid_selection = (move =~ /[A-Ha-h][1-8]/)
+       valid_selection = (from =~ /[A-Ha-h][1-8]/)
        break if valid_selection
        print "Sorry, not a valid place on the board. Try something like A7. "
-       move = gets.chomp
+       from = gets.chomp
      end
-     m1 = move
+     m1 = from
      print "Where would you like to move the piece to? "
-     move = gets.chomp.upcase
+     to = gets.chomp.upcase
      valid_selection = false
      until valid_selection
-      valid_selection = (('A'..'Z').include?(move[0]) && (1..8).include?(move[1].to_i))
+       valid_selection = (to  =~ /[A-Ha-h][1-8]/)
        break if valid_selection
-       print "Sorry, not a valid place on the board. Try something like A7. "
-       move = gets.chomp
+       print "Sorry, not a valid place on the board. Try something like A6. "
+       to = gets.chomp
      end
-     m2 = move
+     m2 = to
      return [m1, m2]
     end
 

@@ -1,0 +1,304 @@
+--- !ruby/object:Chess::Game
+white_player: al
+black_player: bob
+turn_num: 0
+game: !ruby/object:Chess::GameEngine
+  board: !ruby/object:Chess::Board
+    white_list:
+    - &10 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 0
+      representation: "♟"
+    - &11 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 1
+      representation: "♟"
+    - &12 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 2
+      representation: "♟"
+    - &13 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 3
+      representation: "♟"
+    - &14 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 4
+      representation: "♟"
+    - &15 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 5
+      representation: "♟"
+    - &16 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 6
+      representation: "♟"
+    - &17 !ruby/object:Chess::Pawn
+      color: :white
+      type: :pawn
+      position:
+      - 1
+      - 7
+      representation: "♟"
+    - &2 !ruby/object:Chess::Rook
+      color: :white
+      type: :rook
+      position:
+      - 0
+      - 0
+      representation: "♜"
+    - &9 !ruby/object:Chess::Rook
+      color: :white
+      type: :rook
+      position:
+      - 0
+      - 7
+      representation: "♜"
+    - &3 !ruby/object:Chess::Knight
+      color: :white
+      type: :knight
+      position:
+      - 0
+      - 1
+      representation: "♞"
+    - &8 !ruby/object:Chess::Knight
+      color: :white
+      type: :knight
+      position:
+      - 0
+      - 6
+      representation: "♞"
+    - &4 !ruby/object:Chess::Bishop
+      color: :white
+      type: :bishop
+      position:
+      - 0
+      - 2
+      representation: "♝"
+    - &7 !ruby/object:Chess::Bishop
+      color: :white
+      type: :bishop
+      position:
+      - 0
+      - 5
+      representation: "♝"
+    - &5 !ruby/object:Chess::Queen
+      color: :white
+      type: :queen
+      position:
+      - 0
+      - 3
+      representation: "♛"
+    - &6 !ruby/object:Chess::King
+      color: :white
+      type: :king
+      position:
+      - 0
+      - 4
+      representation: "♚"
+    black_list:
+    - &18 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 0
+      representation: "♙"
+    - &19 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 1
+      representation: "♙"
+    - &20 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 2
+      representation: "♙"
+    - &21 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 3
+      representation: "♙"
+    - &22 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 4
+      representation: "♙"
+    - &23 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 5
+      representation: "♙"
+    - &24 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 6
+      representation: "♙"
+    - &25 !ruby/object:Chess::Pawn
+      color: :black
+      type: :pawn
+      position:
+      - 6
+      - 7
+      representation: "♙"
+    - &26 !ruby/object:Chess::Rook
+      color: :black
+      type: :rook
+      position:
+      - 7
+      - 0
+      representation: "♖"
+    - &30 !ruby/object:Chess::Rook
+      color: :black
+      type: :rook
+      position:
+      - 7
+      - 7
+      representation: "♖"
+    - &27 !ruby/object:Chess::Knight
+      color: :black
+      type: :knight
+      position:
+      - 7
+      - 1
+      representation: "♘"
+    - &29 !ruby/object:Chess::Knight
+      color: :black
+      type: :knight
+      position:
+      - 7
+      - 6
+      representation: "♘"
+    - &28 !ruby/object:Chess::Bishop
+      color: :black
+      type: :bishop
+      position:
+      - 7
+      - 2
+      representation: "♗"
+    - &1 !ruby/object:Chess::Bishop
+      color: :black
+      type: :bishop
+      position:
+      - 7
+      - 5
+      representation: "♗"
+    - *1
+    board:
+    - - *2
+      - *3
+      - *4
+      - *5
+      - *6
+      - *7
+      - *8
+      - *9
+    - - *10
+      - *11
+      - *12
+      - *13
+      - *14
+      - *15
+      - *16
+      - *17
+    - - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+    - - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+    - - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+    - - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+    - - *18
+      - *19
+      - *20
+      - *21
+      - *22
+      - *23
+      - *24
+      - *25
+    - - *26
+      - *27
+      - *28
+      - !ruby/object:Chess::Queen
+        color: :black
+        type: :queen
+        position:
+        - 7
+        - 3
+        representation: "♕"
+      - !ruby/object:Chess::King
+        color: :black
+        type: :king
+        position:
+        - 7
+        - 4
+        representation: "♔"
+      - *1
+      - *29
+      - *30
+    - - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
+      - 
