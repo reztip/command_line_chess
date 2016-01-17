@@ -8,7 +8,7 @@ require 'set'
 
 module Chess
   class Board
-    attr_reader :n, :row_labels, :column_labels, :black_list, :white_list
+    attr_reader :n, :row_labels, :column_labels, :black_list, :white_list, :board
     @@n = 8
     @row_labels = ((1..@@n).to_a).map {|x| x.to_s}
     @@column_labels = ('A'..'H').to_a
@@ -230,11 +230,13 @@ module Chess
       x = pos.last
       blocked = false
       hit_count = 0
+      pos_count = 0
       (x..7).each do |i|
-        moves.delete([y,i]) if blocked || hit_count > 1
+        moves.delete([y,i]) if blocked || hit_count > 1 || pos_count > 1
         neighbor = piece_at(*nice_string([y,i+1])) if i != 7
         blocked ||= !neighbor.nil? && neighbor.color == piece.color
         hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+        pos_count = pos_count + 1 if hit_count > 0
       end
       return moves
     end
@@ -244,11 +246,13 @@ module Chess
       x = pos.last
       blocked = false
       hit_count = 0
+      pos_count = 0
       (0..x).reverse_each do |i|
-        moves.delete([y,i]) if blocked || hit_count > 1
+        moves.delete([y,i]) if blocked || hit_count > 1 || pos_count > 1
         neighbor = piece_at(*nice_string([y,i-1])) if i != 0
         blocked ||= !neighbor.nil? && neighbor.color == piece.color
         hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+        pos_count = pos_count + 1 if hit_count > 0
       end
       return moves
     end
@@ -258,11 +262,13 @@ module Chess
       x = pos.last
       blocked = false
       hit_count = 0
+      pos_count  =0 
       (y..7).each do |j|
-        moves.delete([j,x]) if blocked || hit_count > 1
+        moves.delete([j,x]) if blocked || hit_count > 1 || pos_count > 1
         neighbor = piece_at(*nice_string([j+1,x])) if j != 7
         blocked ||= !neighbor.nil? && neighbor.color == piece.color
         hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+        pos_count = pos_count + 1 if hit_count > 0
       end
       return moves
     end
@@ -272,11 +278,13 @@ module Chess
       x = pos.last
       blocked = false
       hit_count = 0
+      pos_count = 0
       (0..y).reverse_each do |j|
-        moves.delete([j,x]) if blocked || hit_count > 1
+        moves.delete([j,x]) if blocked || hit_count > 1 || pos_count > 1
         neighbor = piece_at(*nice_string([j-1,x])) if j != 0
         blocked ||= !neighbor.nil? && neighbor.color == piece.color
         hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+        pos_count = pos_count + 1 if hit_count > 0
       end
       return moves
     end

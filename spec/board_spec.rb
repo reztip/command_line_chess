@@ -117,6 +117,46 @@ module Chess
        expect(@board.piece_moves(white)).to match_array expected_moves
        expect(@board.piece_moves(black)).to match_array expected_moves
      end
+     it "is unrestricted on an empty board" do
+       pos = []
+       (0..7).each do |x|
+         pos << [x,0] if x != 0
+         pos << [0,x] if x != 0
+         (0..7).each do |y|
+          @board.board[x][y] = nil
+         end
+       end
+       @board.set_piece("A", 1, Rook.new(:white, [0,0]))
+       expect(@board.piece_moves(@board.piece_at("A",1))).to match_array pos
+     end
+
+     it "has two enemy rooks on either ends" do
+       pos = []
+       (0..7).each do |x|
+         pos << [x,0] if x != 0
+         pos << [0,x] if x != 0
+         (0..7).each do |y|
+          @board.board[x][y] = nil
+         end
+       end
+       @board.set_piece("A", 1, Rook.new(:white, [0,0]))
+       @board.set_piece("A", 8, Rook.new(:black, [7,0]))
+       @board.set_piece("H", 1, Rook.new(:black, [0,7]))
+       expect(@board.piece_moves(@board.piece_at("A",1))).to match_array pos
+     end
+     it "has all enemy neigbhors" do
+     pos = [[4,3], [4,5], [5,4], [3,4]]
+     map = {3 => "D", 4 => "E", 5 => "F"}
+     rook = Rook.new(:white, [4,4])
+     @board.set_piece("E", 5, rook)
+     [-1,1].each do |i|
+         rk = Rook.new(:black, [4 + i, 4 ])
+         @board.set_piece(map[4+i], 5 , rk)
+         rk = Rook.new(:black, [4 , 4+i ])
+         @board.set_piece("E", 4 + i + 1, rk)
+       end
+     expect(@board.piece_moves(rook)).to match_array pos
+     end
     end
    end
   end
