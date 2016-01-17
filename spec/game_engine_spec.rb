@@ -82,8 +82,11 @@ module Chess
     expect(@game.checkmate?(@black)).to be false
    end
    it "the black king is surrounded by pawns" do
+    @game = GameEngine.new
     @game.make_move("D2","D7")
     @game.make_move("F2","F7")
+    @game.make_move("D1","E6")
+    puts @game
     expect(@game.checkmate?(@black)).to be true
    end
   end

@@ -39,13 +39,15 @@ module Chess
      friendly_piece_list.each do |piece|
        pos = piece.position
        loc = pretty_location_representation(pos)
-       v_moves = @board.piece_moves(piece) 
+       p "#{pos} : #{loc} : #{piece.type}"
+       v_moves = valid_moves(loc) 
        v_moves.each do |move|
         dest = pretty_location_representation(move) 
         old_piece = piece_at(dest)
 	      @board.move_piece(loc, dest)
-	      return false if !in_check?(turn_num)
+	      x =  !in_check?(turn_num)
 	      @board.unmake_move(piece, old_piece, loc, dest, color)
+        return x if x == false
        end
      end
      return true
