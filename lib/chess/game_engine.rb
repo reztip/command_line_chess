@@ -16,12 +16,7 @@ module Chess
      position_y = position[-1].to_i
      piece = @board.piece_at(position_x, position_y)
      return nil if piece.nil? #quick optimization, also prevents runtime errors
-     legal_moves = @board.piece_moves(piece)
-     if !legal_moves || legal_moves == []
-      return nil
-     else
-      return legal_moves
-    end
+     return @board.piece_moves(piece)
    end
 
    def to_s
@@ -60,12 +55,10 @@ module Chess
      friendly_piece_list = color == :white ? @board.white_list : @board.black_list
      king = friendly_piece_list.find {|piece| piece.type == :king} 
      @board.reorder_enemy_pieces_around(king)
-     p enemy_piece_list.map {|pc| "#{pc.color} #{pc.type}: #{pc.location}"}
+     #p enemy_piece_list.map {|pc| "#{pc.color} #{pc.type}: #{pc.location} & distance = #{pc.dist_from(king)}"}
      enemy_piece_list.each do |piece| 
-        loc = pretty_location_representation(piece.position)
-	      v_moves = valid_moves(loc)
-        #p "#{piece.color.to_s} #{piece.to_s} at #{piece.position}: #{v_moves}" unless v_moves.nil?
-	      return true if !v_moves.nil? && v_moves.include?(king.position)
+        v_moves  = @board.piece_moves(piece)
+        return true if !v_moves.nil? && v_moves.include?(king.position)
      end
      return false
    end

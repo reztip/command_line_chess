@@ -12,10 +12,11 @@ module Chess
     end
     it "white knight threatens the black king" do
       @game.make_move("B1", "C7")
-      puts @game
       piece = @game.board.piece_at("C", 7)
-      #puts piece.nil?
-      expect(@game.board.piece_moves(piece)).to include([7,4])
+      expect(piece.position).to eq [6,2]
+      expect(@game.board.white_list).to include(piece)
+      #p @game.valid_moves("C7")
+      expect(@game.valid_moves("C7")).to include([7,4])
       expect(@game.in_check?(@black)).to be true
     end
    end
