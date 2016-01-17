@@ -214,8 +214,71 @@ module Chess
     end
 
     def rook_moves(piece, moves)
-     loc = piece.position
-      
+      pos = piece.position
+      row = pos.first
+      col = pos.last
+      filter_right_pieces(piece,moves)
+      filter_left_pieces(piece,moves)
+      filter_above_pieces(piece,moves)
+      filter_below_pieces(piece,moves)
+      moves.delete(piece.position)
+      return moves
+    end
+    def filter_right_pieces(piece, moves)
+      pos = piece.position
+      y = pos.first
+      x = pos.last
+      blocked = false
+      hit_count = 0
+      (x..7).each do |i|
+        moves.delete([y,i]) if blocked || hit_count > 1
+        neighbor = piece_at(*nice_string([y,i+1])) if i != 7
+        blocked ||= !neighbor.nil? && neighbor.color == piece.color
+        hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+      end
+      return moves
+    end
+    def filter_left_pieces(piece, moves)
+      pos = piece.position
+      y = pos.first
+      x = pos.last
+      blocked = false
+      hit_count = 0
+      (0..x).reverse_each do |i|
+        moves.delete([y,i]) if blocked || hit_count > 1
+        neighbor = piece_at(*nice_string([y,i-1])) if i != 0
+        blocked ||= !neighbor.nil? && neighbor.color == piece.color
+        hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+      end
+      return moves
+    end
+    def filter_above_pieces(piece, moves)
+      pos = piece.position
+      y = pos.first
+      x = pos.last
+      blocked = false
+      hit_count = 0
+      (y..7).each do |j|
+        moves.delete([j,x]) if blocked || hit_count > 1
+        neighbor = piece_at(*nice_string([j+1,x])) if j != 7
+        blocked ||= !neighbor.nil? && neighbor.color == piece.color
+        hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+      end
+      return moves
+    end
+    def filter_below_pieces(piece, moves)
+      pos = piece.position
+      y = pos.first
+      x = pos.last
+      blocked = false
+      hit_count = 0
+      (0..y).reverse_each do |j|
+        moves.delete([j,x]) if blocked || hit_count > 1
+        neighbor = piece_at(*nice_string([j-1,x])) if j != 0
+        blocked ||= !neighbor.nil? && neighbor.color == piece.color
+        hit_count = hit_count + 1 if !neighbor.nil? && neighbor.color == other_color(piece.color)
+      end
+      return moves
     end
 
     def queen_moves(piece, moves)
@@ -371,7 +434,6 @@ module Chess
     end
     
     def dist_from(other)
-      #puts "other position: #{other.position} & self: #{@position}"
      return (@position[0] - other.position[0]).abs + (@position[1] - other.position[1]).abs
     end
     def location
@@ -460,7 +522,6 @@ module Chess
       pos_x = @position.first
       pos_y = @position.last
       px = [ [pos_x + 1, pos_y + 2],[pos_x + 1, pos_y - 2],[pos_x + 2, pos_y + 1], [pos_x + 2, pos_y - 1],[pos_x - 1, pos_y + 2],[pos_x - 1, pos_y - 2],[pos_x - 2, pos_y + 1],[pos_x - 2, pos_y - 1]]
-      #puts px
       return px.select {|pos| pos.first.between?(0,7) && pos.last.between?(0,7)}
     end
   end
@@ -558,6 +619,5 @@ module Chess
 end
 include Chess
 # a = King.new
-# puts Chess.constants
 # b = Board.new
 # puts b.to_s
