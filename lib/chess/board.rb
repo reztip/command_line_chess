@@ -74,7 +74,8 @@ module Chess
       piece = piece_at(from[0], from[-1].to_i)
       set_piece(to[0], to[-1].to_i, piece) 
       remove_piece(from)
-      piece.update_position([from[1].to_i,x_coord(from[0])])
+      piece.update_position([to[1].to_i - 1 , to[0].ord - 65])
+      return nil
     end
     def unmake_move(moved, deleted, source, dest, color)
      enemies = color == :white ? @black_list : @white_list
@@ -148,9 +149,9 @@ module Chess
        #pawn cannot move to position if there is a different color in front of it 
        potential_moves.delete(mov) if other_piece.color != color && mov.last == piece.position.last
        #pawn cannot move up two spaces if there is a piece blocking it
-       if piece.dist_from(other_piece) == 2
-        potential_moves.delete(mov) if piece.color == :white && !piece_at(x, y-1).nil?
-        potential_moves.delete(mov) if piece.color == :black && !piece_at(x, y+1).nil?
+       if piece.dist_from(other_piece) == 1 && [1,6].include?(piece.position.first)
+        potential_moves.delete([mov.first + 1, mov.last]) if piece.color == :white && !piece_at(x, y-1).nil?
+        potential_moves.delete([mov.first-1, mov.last]) if piece.color == :black && !piece_at(x, y+1).nil?
        end
       end
       return potential_moves 
@@ -310,6 +311,7 @@ module Chess
       set_piece( "D", 1,queen)
       king = King.new(:white, [0,4])
       @white_list << king
+      set_piece("E",1, king)
     end
 
     def fill_black

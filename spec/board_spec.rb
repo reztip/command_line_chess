@@ -62,14 +62,63 @@ module Chess
       end
 
     #TODO -all the hard stuff. Like checkng valid moves, checkmate, etc. 
-    context 'actual_possible moves' do
+    context '#actual_possible_moves' do
      let(:board) {Board.new}
-     it "sees bottom left actual possible moves correctly (pawn)" do
-       piece = @board.piece_at("A", 2)
-       expected_moves = [[2,0], [3,0]]
-       potentials = piece.potential_moves()
-       expect(@board.actual_possible_moves(piece,potentials)).to match_array expected_moves
+     context Pawn do
+      it "sees bottom left actual possible moves correctly (pawn)" do
+        piece = @board.piece_at("A", 2)
+        expected_moves = [[2,0], [3,0]]
+         potentials = piece.potential_moves()
+         expect(@board.actual_possible_moves(piece,potentials)).to match_array expected_moves
+       end
+       it "recognizes if a pawn in the starting position is blocked" do
+         @board.move_piece("B2", "A3")
+         piece = @board.piece_at("A", 2)
+         expected_moves = []
+         potentials = piece.potential_moves
+         expect(@board.piece_at("A",3)).to eq Pawn.new(:white, [2,0])
+         expect(@board.actual_possible_moves(piece, potentials)).to match_array expected_moves
+       end
+       it "same applies for blocked black piece" do
+         @board.move_piece("G7", "H6")
+         piece = @board.piece_at("H", 7)
+         expected_moves = []
+         potentials = piece.potential_moves
+         expect(@board.piece_at("H",6)).to eq Pawn.new(:black, [5,7])
+         expect(@board.actual_possible_moves(piece, potentials)).to match_array expected_moves
+       end
+       it "pawns of different colors block each other" do
+         @board.move_piece("G7", "A3")
+         piece = @board.piece_at("A", 2 )
+         expected_moves = []
+         potentials = piece.potential_moves
+         expect(@board.piece_at("A",3)).to eq Pawn.new(:black, [2,0])
+         expect(@board.actual_possible_moves(piece, potentials)).to match_array expected_moves
+         @board.move_piece("A2", "A6")
+         black = @board.piece_at("A",7)
+         expect(@board.actual_possible_moves(black, black.potential_moves)).to match_array expected_moves
+       end
+       it "a white pawn can capture a black pawn in  either diagonal" do
+         @board.move_piece("C7", "C3")
+         @board.move_piece("E7", "E3")
+         @board.move_piece("A2", "D3")
+         piece = @board.piece_at("D",2) #D2 = [1, 3]
+         expected_moves = [ [2,2], [2,4]]
+         expect(@board.actual_possible_moves(piece, piece.potential_moves)).to match_array expected_moves
+         puts @board.to_s
+       end
+    end
+    context Rook do
+     it "cant budge initially" do
+       white = @board.piece_at("A", 1)
+       black = @board.piece_at("A", 8)
+       expected_moves = []
+       white_moves = white.potential_moves
+       black_moves = black.potential_moves
+       expect(@board.actual_possible_moves(white, white_moves)).to match_array expected_moves
+       expect(@board.actual_possible_moves(black, black_moves)).to match_array expected_moves
      end
     end
+   end
   end
 end
