@@ -41,23 +41,31 @@ module Chess
         let(:board) {Board.new}
         it "removes pieces properly" do
           expect(@board.piece_at("B", 2)).to eq Pawn.new(:white, [1, 1])
-          @board.remove_piece("B1")
+          b1 = @board.piece_at("B", 1)
+          @board.remove_piece("B1",b1)
+          l1 = @board.white_list
+          l2 = @board.black_list
           expect(@board.piece_at("B", 1)).to be_nil
+          d8 = @board.piece_at("D",8)
           expect(@board.piece_at("D", 8)).to eq Queen.new(:black, [7, 3])
-          @board.remove_piece("D8")
+          @board.remove_piece("D8", d8)
           expect(@board.piece_at("D", 8)).to be_nil
+          expect(l1.length).to eq 15
+          expect(l2.length).to eq 15
         end
 
         it "does not throw an error if the piece is nil" do
                 expect(@board.piece_at("D", 4)).to be_nil
-           expect {@board.remove_piece("D4")}.not_to raise_error
+           expect {@board.remove_piece("D4",nil)}.not_to raise_error
          end
 
          it "removes piecs from their appropriate list" do
-          @board.remove_piece("B1")
-          expect(@board.white_list).not_to include Knight.new(:white, [0,1])
-          @board.remove_piece("C7")
-          expect(@board.black_list).not_to include Pawn.new(:black, [6, 2])
+          b1 = @board.piece_at("B", 1)
+          @board.remove_piece("B1",b1)
+          expect(@board.white_list).not_to include b1 
+          c7 = @board.piece_at("C",7)
+          @board.remove_piece("C7",c7)
+          expect(@board.black_list).not_to include c7 
         end
       end
 
@@ -215,6 +223,21 @@ module Chess
      end
     end
 
+   end
+   describe "#unmake_move" do
+   it "returns board state after moves are made" do
+      from = "A1"
+       to = "A2"
+        rook = @board.piece_at("A",1)
+        pawn = @board.piece_at("A",2)
+        whites = @board.white_list
+        @board.move_piece(from,to)
+        expect(whites.length).to eq 15
+        @board.unmake_move(rook,pawn, from, to, :white)
+        expect(@board.piece_at("A",1)).to eq Rook.new(:white, [0,0])
+        expect(@board.piece_at("A",2)).to eq Pawn.new(:white,[1,0])
+        expect(whites.length).to eq 16
+    end
    end
   end
 end
