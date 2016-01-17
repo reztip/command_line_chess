@@ -62,14 +62,14 @@ module Chess
       end
 
     #TODO -all the hard stuff. Like checkng valid moves, checkmate, etc. 
-    context '#actual_possible_moves' do
+    context '#piece_moves' do
      let(:board) {Board.new}
      context Pawn do
       it "sees bottom left actual possible moves correctly (pawn)" do
         piece = @board.piece_at("A", 2)
         expected_moves = [[2,0], [3,0]]
          potentials = piece.potential_moves()
-         expect(@board.actual_possible_moves(piece,potentials)).to match_array expected_moves
+         expect(@board.piece_moves(piece)).to match_array expected_moves
        end
        it "recognizes if a pawn in the starting position is blocked" do
          @board.move_piece("B2", "A3")
@@ -77,7 +77,7 @@ module Chess
          expected_moves = []
          potentials = piece.potential_moves
          expect(@board.piece_at("A",3)).to eq Pawn.new(:white, [2,0])
-         expect(@board.actual_possible_moves(piece, potentials)).to match_array expected_moves
+         expect(@board.piece_moves(piece)).to match_array expected_moves
        end
        it "same applies for blocked black piece" do
          @board.move_piece("G7", "H6")
@@ -85,7 +85,7 @@ module Chess
          expected_moves = []
          potentials = piece.potential_moves
          expect(@board.piece_at("H",6)).to eq Pawn.new(:black, [5,7])
-         expect(@board.actual_possible_moves(piece, potentials)).to match_array expected_moves
+         expect(@board.piece_moves(piece)).to match_array expected_moves
        end
        it "pawns of different colors block each other" do
          @board.move_piece("G7", "A3")
@@ -93,10 +93,10 @@ module Chess
          expected_moves = []
          potentials = piece.potential_moves
          expect(@board.piece_at("A",3)).to eq Pawn.new(:black, [2,0])
-         expect(@board.actual_possible_moves(piece, potentials)).to match_array expected_moves
+         expect(@board.piece_moves(piece)).to match_array expected_moves
          @board.move_piece("A2", "A6")
          black = @board.piece_at("A",7)
-         expect(@board.actual_possible_moves(black, black.potential_moves)).to match_array expected_moves
+         expect(@board.piece_moves(black)).to match_array expected_moves
        end
        it "a white pawn can capture a black pawn in  either diagonal" do
          @board.move_piece("C7", "C3")
@@ -104,8 +104,7 @@ module Chess
          @board.move_piece("A2", "D3")
          piece = @board.piece_at("D",2) #D2 = [1, 3]
          expected_moves = [ [2,2], [2,4]]
-         expect(@board.actual_possible_moves(piece, piece.potential_moves)).to match_array expected_moves
-         puts @board.to_s
+         expect(@board.piece_moves(piece)).to match_array expected_moves
        end
     end
     context Rook do
@@ -115,8 +114,8 @@ module Chess
        expected_moves = []
        white_moves = white.potential_moves
        black_moves = black.potential_moves
-       expect(@board.actual_possible_moves(white, white_moves)).to match_array expected_moves
-       expect(@board.actual_possible_moves(black, black_moves)).to match_array expected_moves
+       expect(@board.piece_moves(white)).to match_array expected_moves
+       expect(@board.piece_moves(black)).to match_array expected_moves
      end
     end
    end

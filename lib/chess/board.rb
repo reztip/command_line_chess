@@ -103,12 +103,17 @@ module Chess
       return character.ord - 65
     end
 
+    def nice_string(array)
+      return (array.last + 65).chr ,  (array.first + 1)
+    end
+
     def piece_moves(piece)
       return nil if piece.nil? || !piece.is_a?(Pieces)
       potential_moves = piece.potential_moves #a list of positions of form [0, 6] which is the position's piece on the array
       #p potential_moves
       return nil if potential_moves.nil? || potential_moves.empty?
-      potential_moves.select! {|pos| piece_at(pos.first + 1, pos.last + 1) == nil || piece_at(pos.first + 1, pos.last + 1).color == other_color(piece.color)  }
+      potential_moves.select! {|pos| piece_at(*nice_string(pos)).nil? || piece_at(*nice_string(pos)).color == other_color(piece.color) } 
+      potential_moves.select! {|pos| pos != piece.position}
       actual_moves = actual_possible_moves(piece, potential_moves)
       return actual_moves
     end
@@ -132,8 +137,6 @@ module Chess
         return queen_moves(piece, potential_moves)
       end
     end
-
-    private
     def pawn_moves(piece, potential_moves)
       color = piece.color
       pm = Array.new(potential_moves)
@@ -149,10 +152,14 @@ module Chess
        #pawn cannot move to position if there is a different color in front of it 
        potential_moves.delete(mov) if other_piece.color != color && mov.last == piece.position.last
        #pawn cannot move up two spaces if there is a piece blocking it
-       if piece.dist_from(other_piece) == 1 && [1,6].include?(piece.position.first)
-        potential_moves.delete([mov.first + 1, mov.last]) if piece.color == :white && !piece_at(x, y-1).nil?
-        potential_moves.delete([mov.first-1, mov.last]) if piece.color == :black && !piece_at(x, y+1).nil?
-       end
+       dist = (mov.first - piece.position.first).abs + (mov.last - piece.position.last).abs
+      end
+      if color == :white && piece.position.first == 1
+        potential_moves.delete([piece.position.first + 2, piece.position.last]) if !piece_at(*nice_string([piece.position.first + 1, piece.position.last])).nil? 
+      end
+
+      if color == :black && piece.position.first == 6
+        potential_moves.delete([piece.position.first - 2, piece.position.last]) if !piece_at(*nice_string([piece.position.first - 1, piece.position.last])).nil? 
       end
       return potential_moves 
     end
@@ -207,48 +214,8 @@ module Chess
     end
 
     def rook_moves(piece, moves)
-      loc = piece.location
-      x = loc.first
-      y = first.last
-      i = x + 1
-      j = y
-      blocked_count = 0
-      until (i > 7 )
-        other_piece = piece_at(i+1, y + 1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        i = i + 1
-      end
-      i = x - 1
-      until (i < 0 )
-        other_piece = piece_at(i+1, y + 1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        i = i - 1
-      end
-      i = x; j = y - 1
-      until (j < 0 )
-        other_piece = piece_at(x+1, j + 1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        j = j - 1
-      end
-      i = x; j = y - 1
-      until (j > 7 )
-        other_piece = piece_at(x+1, j + 1)
-        blocked_by_same_team = (!other_piece.nil? && other_piece.color == piece.color)
-        blocked_by_other_team = (!other_piece.nil? && other_piece.color != piece.color)
-        blocked_count = blocked_count + 1 if blocked_by_other_team
-        moves.delete([i,j]) if (blocked_by_same_team || blocked_count > 1)
-        j = j_+ 1
-      end 
-      return moves
+     loc = piece.position
+      
     end
 
     def queen_moves(piece, moves)
