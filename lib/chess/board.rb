@@ -169,6 +169,7 @@ module Chess
       filter_diag_down_right(piece, moves) 
       filter_diag_up_left(piece, moves) 
       filter_diag_down_left(piece, moves) 
+      return moves
     end
     def filter_diag_up_right(piece,moves)
      row = piece.position.first

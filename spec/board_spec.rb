@@ -214,6 +214,10 @@ module Chess
        expect(@board.piece_moves(bish)).to match_array pos
      end
     end
+
+    context Queen do
+
+    end
    end
   end
 end
