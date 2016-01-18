@@ -74,10 +74,13 @@ module Chess
       return nil
     end
     def unmake_move(moved, deleted, source, dest, color)
-      friends = color == :white ? @white_list : @black_list
+     #color is the color of the team that makes the move FROM from TO to
+     friends = (color == :white ? @white_list : @black_list)
+     enemies = (color == :white ? @black_list : @white_list)
      move_piece(dest,source)
      set_piece(dest[0], dest[1].to_i, deleted) if !deleted.nil?
-     friends << deleted if !deleted.nil? && deleted.color == color && !friends.include?(deleted)
+     friends << deleted if !deleted.nil? && deleted.color == moved.color  && !friends.include?(deleted)
+     enemies << deleted if !deleted.nil? && deleted.color != moved.color  && !enemies.include?(deleted)
      nil
     end
    def remove_piece(to, piece)

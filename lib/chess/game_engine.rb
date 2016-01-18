@@ -15,7 +15,7 @@ module Chess
      position_x = position[0].upcase
      position_y = position[-1].to_i
      piece = @board.piece_at(position_x, position_y)
-     return nil if piece.nil? #quick optimization, also prevents runtime errors
+     return [] if piece.nil? #quick optimization, also prevents runtime errors
      return @board.piece_moves(piece)
    end
 
@@ -39,15 +39,19 @@ module Chess
      friendly_piece_list.each do |piece|
        pos = piece.position
        loc = pretty_location_representation(pos)
-       p "#{pos} : #{loc} : #{piece.type}"
+#       p "#{pos} : #{loc} : #{piece.type}"
        v_moves = valid_moves(loc) 
        v_moves.each do |move|
         dest = pretty_location_representation(move) 
         old_piece = piece_at(dest)
 	      @board.move_piece(loc, dest)
 	      x =  !in_check?(turn_num)
+        puts self if !x
+        p "#{piece.to_s} : at #{loc} moving to #{dest}"
+        #puts self if !x
+        #p v_moves if !x
 	      @board.unmake_move(piece, old_piece, loc, dest, color)
-        return x if x == false
+        return false if !x
        end
      end
      return true

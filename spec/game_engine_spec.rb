@@ -83,10 +83,16 @@ module Chess
    end
    it "the black king is surrounded by pawns" do
     @game = GameEngine.new
-    @game.make_move("D2","D7")
-    @game.make_move("F2","F7")
+    @game.make_move("F1","D7")
+    @game.make_move("C1","F7")
     @game.make_move("D1","E6")
-    puts @game
+    wk = @game.piece_at("G1")
+    expect(@game.valid_moves("G1")).to match_array [[2,5],[2,7]]
+    expect(@game.valid_moves("G7")).to match_array [[5,6],[4,6]]
+    expect(@game.piece_at("A7")).to be_a Pawn
+    expect(@game.piece_at("C8")).to be_a Bishop
+    expect(@game.in_check?(@black)).to be true
+    expect(@game.checkmate?(@white)).to be false
     expect(@game.checkmate?(@black)).to be true
    end
   end

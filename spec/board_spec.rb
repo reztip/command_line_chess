@@ -225,7 +225,7 @@ module Chess
 
    end
    describe "#unmake_move" do
-   it "returns board state after moves are made" do
+   it "returns board state after moves are made involving a team replacement" do
       from = "A1"
        to = "A2"
         rook = @board.piece_at("A",1)
@@ -237,6 +237,31 @@ module Chess
         expect(@board.piece_at("A",1)).to eq Rook.new(:white, [0,0])
         expect(@board.piece_at("A",2)).to eq Pawn.new(:white,[1,0])
         expect(whites.length).to eq 16
+    end
+    it "returns board state after moves are made involving black taking white" do
+      from = "D8"
+      to = "D1"
+      wq = @board.piece_at("D",1)
+      bq = @board.piece_at("D",8)
+      whites = @board.white_list
+      expect(whites.length).to eq 16
+      @board.move_piece(from,to)
+      expect(whites.length).to eq 15
+      @board.unmake_move(bq,wq,from,to, :black)
+      expect(whites.length).to eq 16
+      expect(@board.piece_at("D",1)).to eq wq
+      expect(@board.piece_at("D",8)).to eq bq
+    end
+    it "returns board state after moving a piece to an empty slot" do
+      from = "G1"
+      to = "H3"
+      wh = @board.piece_at("G",1)
+      @board.move_piece(from, to)
+      expect(@board.piece_at("H",3)).to eq wh
+      @board.unmake_move(wh, nil, from, to, :white)
+      expect(@board.piece_at("H",3)).to be_nil
+      expect(@board.piece_at("G",1)).to eq wh
+      expect(wh.position).to eq [0,6]
     end
    end
   end
